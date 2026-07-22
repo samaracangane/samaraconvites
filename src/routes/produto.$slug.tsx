@@ -58,7 +58,7 @@ function ProductPage() {
             </div>
             {product.gallery.length > 1 && (
               <div className="mt-3 grid grid-cols-4 gap-2">
-                {product.gallery.map((img, i) => (
+                {product.gallery.map((img: string, i: number) => (
                   <img key={i} src={img} alt="" className="aspect-square rounded-xl object-cover" />
                 ))}
               </div>
@@ -111,7 +111,7 @@ function ProductPage() {
             </button>
 
             <div className="mt-8 flex flex-wrap gap-2">
-              {product.tags.map((t) => (
+              {product.tags.map((t: string) => (
                 <span key={t} className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">#{t}</span>
               ))}
             </div>
