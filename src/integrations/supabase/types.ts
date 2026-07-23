@@ -14,16 +14,311 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      banners: {
+        Row: {
+          active: boolean
+          created_at: string
+          cta_label: string | null
+          id: string
+          image_url: string | null
+          link_url: string | null
+          position: string
+          sort_order: number
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          cta_label?: string | null
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          position?: string
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          cta_label?: string | null
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          position?: string
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          active: boolean
+          color: string | null
+          created_at: string
+          emoji: string | null
+          id: string
+          image_url: string | null
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          color?: string | null
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          color?: string | null
+          created_at?: string
+          emoji?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pages: {
+        Row: {
+          active: boolean
+          content: string | null
+          created_at: string
+          id: string
+          meta_description: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          content?: string | null
+          created_at?: string
+          id?: string
+          meta_description?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          content?: string | null
+          created_at?: string
+          id?: string
+          meta_description?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          active: boolean
+          bestseller: boolean
+          category_id: string | null
+          created_at: string
+          delivery_hours: number
+          description: string | null
+          featured: boolean
+          gallery: Json
+          id: string
+          image_url: string | null
+          is_new: boolean
+          old_price: number | null
+          on_sale: boolean
+          price: number
+          slug: string
+          sort_order: number
+          tags: string[]
+          title: string
+          type: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          active?: boolean
+          bestseller?: boolean
+          category_id?: string | null
+          created_at?: string
+          delivery_hours?: number
+          description?: string | null
+          featured?: boolean
+          gallery?: Json
+          id?: string
+          image_url?: string | null
+          is_new?: boolean
+          old_price?: number | null
+          on_sale?: boolean
+          price?: number
+          slug: string
+          sort_order?: number
+          tags?: string[]
+          title: string
+          type?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          active?: boolean
+          bestseller?: boolean
+          category_id?: string | null
+          created_at?: string
+          delivery_hours?: number
+          description?: string | null
+          featured?: boolean
+          gallery?: Json
+          id?: string
+          image_url?: string | null
+          is_new?: boolean
+          old_price?: number | null
+          on_sale?: boolean
+          price?: number
+          slug?: string
+          sort_order?: number
+          tags?: string[]
+          title?: string
+          type?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      showcase_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          showcase_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          showcase_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          showcase_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "showcase_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "showcase_items_showcase_id_fkey"
+            columns: ["showcase_id"]
+            isOneToOne: false
+            referencedRelation: "showcases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      showcases: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          slug: string
+          sort_order: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          slug: string
+          sort_order?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          slug?: string
+          sort_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +445,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const

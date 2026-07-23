@@ -12,10 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as CategoriasRouteImport } from './routes/categorias'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as PersonalizarSlugRouteImport } from './routes/personalizar.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminVitrinesRouteImport } from './routes/_authenticated/admin.vitrines'
+import { Route as AuthenticatedAdminProdutosRouteImport } from './routes/_authenticated/admin.produtos'
+import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authenticated/admin.paginas'
+import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin.categorias'
+import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
 
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
@@ -30,6 +39,15 @@ const ContatoRoute = ContatoRouteImport.update({
 const CategoriasRoute = CategoriasRouteImport.update({
   id: '/categorias',
   path: '/categorias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -52,67 +70,157 @@ const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminVitrinesRoute =
+  AuthenticatedAdminVitrinesRouteImport.update({
+    id: '/vitrines',
+    path: '/vitrines',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminProdutosRoute =
+  AuthenticatedAdminProdutosRouteImport.update({
+    id: '/produtos',
+    path: '/produtos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPaginasRoute =
+  AuthenticatedAdminPaginasRouteImport.update({
+    id: '/paginas',
+    path: '/paginas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCategoriasRoute =
+  AuthenticatedAdminCategoriasRouteImport.update({
+    id: '/categorias',
+    path: '/categorias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBannersRoute =
+  AuthenticatedAdminBannersRouteImport.update({
+    id: '/banners',
+    path: '/banners',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/sobre': typeof SobreRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/admin/banners': typeof AuthenticatedAdminBannersRoute
+  '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/paginas': typeof AuthenticatedAdminPaginasRoute
+  '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
+  '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/sobre': typeof SobreRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/admin/banners': typeof AuthenticatedAdminBannersRoute
+  '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/paginas': typeof AuthenticatedAdminPaginasRoute
+  '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
+  '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/sobre': typeof SobreRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/_authenticated/admin/banners': typeof AuthenticatedAdminBannersRoute
+  '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/_authenticated/admin/paginas': typeof AuthenticatedAdminPaginasRoute
+  '/_authenticated/admin/produtos': typeof AuthenticatedAdminProdutosRoute
+  '/_authenticated/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/categorias'
     | '/contato'
     | '/sobre'
+    | '/admin'
     | '/categoria/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
+    | '/admin/banners'
+    | '/admin/categorias'
+    | '/admin/paginas'
+    | '/admin/produtos'
+    | '/admin/vitrines'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/categorias'
     | '/contato'
     | '/sobre'
     | '/categoria/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
+    | '/admin/banners'
+    | '/admin/categorias'
+    | '/admin/paginas'
+    | '/admin/produtos'
+    | '/admin/vitrines'
+    | '/admin'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/categorias'
     | '/contato'
     | '/sobre'
+    | '/_authenticated/admin'
     | '/categoria/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
+    | '/_authenticated/admin/banners'
+    | '/_authenticated/admin/categorias'
+    | '/_authenticated/admin/paginas'
+    | '/_authenticated/admin/produtos'
+    | '/_authenticated/admin/vitrines'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CategoriasRoute: typeof CategoriasRoute
   ContatoRoute: typeof ContatoRoute
   SobreRoute: typeof SobreRoute
@@ -144,6 +252,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -172,11 +294,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/vitrines': {
+      id: '/_authenticated/admin/vitrines'
+      path: '/vitrines'
+      fullPath: '/admin/vitrines'
+      preLoaderRoute: typeof AuthenticatedAdminVitrinesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/produtos': {
+      id: '/_authenticated/admin/produtos'
+      path: '/produtos'
+      fullPath: '/admin/produtos'
+      preLoaderRoute: typeof AuthenticatedAdminProdutosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/paginas': {
+      id: '/_authenticated/admin/paginas'
+      path: '/paginas'
+      fullPath: '/admin/paginas'
+      preLoaderRoute: typeof AuthenticatedAdminPaginasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/categorias': {
+      id: '/_authenticated/admin/categorias'
+      path: '/categorias'
+      fullPath: '/admin/categorias'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/banners': {
+      id: '/_authenticated/admin/banners'
+      path: '/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AuthenticatedAdminBannersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminBannersRoute: typeof AuthenticatedAdminBannersRoute
+  AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
+  AuthenticatedAdminPaginasRoute: typeof AuthenticatedAdminPaginasRoute
+  AuthenticatedAdminProdutosRoute: typeof AuthenticatedAdminProdutosRoute
+  AuthenticatedAdminVitrinesRoute: typeof AuthenticatedAdminVitrinesRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminBannersRoute: AuthenticatedAdminBannersRoute,
+  AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
+  AuthenticatedAdminPaginasRoute: AuthenticatedAdminPaginasRoute,
+  AuthenticatedAdminProdutosRoute: AuthenticatedAdminProdutosRoute,
+  AuthenticatedAdminVitrinesRoute: AuthenticatedAdminVitrinesRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   CategoriasRoute: CategoriasRoute,
   ContatoRoute: ContatoRoute,
   SobreRoute: SobreRoute,
