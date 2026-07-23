@@ -25,7 +25,7 @@ export function useResourceMutations(table: TableName) {
 
   const upsert = useMutation({
     mutationFn: async (row: Record<string, unknown>) => {
-      const { error } = await supabase.from(table).upsert(row);
+      const { error } = await supabase.from(table).upsert(row as never);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -49,7 +49,7 @@ export function useResourceMutations(table: TableName) {
 
   const patch = useMutation({
     mutationFn: async ({ id, values }: { id: string; values: Record<string, unknown> }) => {
-      const { error } = await supabase.from(table).update(values).eq("id", id);
+      const { error } = await supabase.from(table).update(values as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: invalidate,
