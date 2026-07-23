@@ -70,7 +70,7 @@ function AdminLayout() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to}
+                  to={item.to as "/admin"}
                   className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
                     active ? "bg-primary text-primary-foreground" : "hover:bg-muted"
                   }`}
