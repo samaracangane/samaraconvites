@@ -12,10 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as CategoriasRouteImport } from './routes/categorias'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as PersonalizarSlugRouteImport } from './routes/personalizar.$slug'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
@@ -30,6 +34,15 @@ const ContatoRoute = ContatoRouteImport.update({
 const CategoriasRoute = CategoriasRouteImport.update({
   id: '/categorias',
   path: '/categorias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -52,67 +65,97 @@ const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
   path: '/categoria/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/sobre': typeof SobreRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/sobre': typeof SobreRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/sobre': typeof SobreRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/categorias'
     | '/contato'
     | '/sobre'
+    | '/admin'
     | '/categoria/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/categorias'
     | '/contato'
     | '/sobre'
     | '/categoria/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
+    | '/admin'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/categorias'
     | '/contato'
     | '/sobre'
+    | '/_authenticated/admin'
     | '/categoria/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   CategoriasRoute: typeof CategoriasRoute
   ContatoRoute: typeof ContatoRoute
   SobreRoute: typeof SobreRoute
@@ -144,6 +187,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -172,11 +229,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   CategoriasRoute: CategoriasRoute,
   ContatoRoute: ContatoRoute,
   SobreRoute: SobreRoute,
