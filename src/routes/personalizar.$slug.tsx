@@ -1,35 +1,22 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { getProduct, formatBRL } from "@/lib/mock-data";
+import { formatBRL } from "@/lib/mock-data";
+import { useStoreProduct } from "@/lib/store-queries";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/personalizar/$slug")({
-  loader: ({ params }) => {
-    const p = getProduct(params.slug);
-    if (!p) throw notFound();
-    return { product: p };
-  },
-  head: ({ loaderData }) => ({
+  head: ({ params }) => ({
     meta: [
-      { title: loaderData ? `Personalizar ${loaderData.product.title} — Samara Encanto Convites` : "Personalizar convite" },
+      { title: `Personalizar ${params.slug} — Samara Encanto Convites` },
       { name: "description", content: "Personalize os dados do seu convite digital em minutos." },
       { name: "robots", content: "noindex" },
     ],
   }),
-  notFoundComponent: () => (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-        <h1 className="font-display text-3xl">Convite não encontrado</h1>
-        <Link to="/categorias" className="mt-4 inline-block font-bold text-primary">Ver todos os convites</Link>
-      </div>
-      <Footer />
-    </div>
-  ),
   component: PersonalizarPage,
 });
+
 
 function Field({
   label, required, children, hint,
@@ -49,8 +36,33 @@ const inputCls =
   "w-full rounded-xl border border-input bg-card px-3.5 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15";
 
 function PersonalizarPage() {
-  const { product } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { data: product, isLoading } = useStoreProduct(slug);
   const [submitted, setSubmitted] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="py-24 text-center text-muted-foreground">Carregando...</div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="mx-auto max-w-3xl px-4 py-24 text-center">
+          <h1 className="font-display text-3xl">Convite não encontrado</h1>
+          <Link to="/categorias" className="mt-4 inline-block font-bold text-primary">Ver convites</Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
 
   if (submitted) {
     return (
