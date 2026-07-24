@@ -1,42 +1,51 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { ProductCard } from "@/components/site/ProductCard";
-import { getProduct, products, formatBRL } from "@/lib/mock-data";
+import { useStoreCatalog, useStoreProduct } from "@/lib/store-queries";
+import { formatBRL } from "@/lib/mock-data";
 import { ArrowLeft, Clock, Sparkles, Play, ShieldCheck, Heart } from "lucide-react";
 
 export const Route = createFileRoute("/produto/$slug")({
-  loader: ({ params }) => {
-    const p = getProduct(params.slug);
-    if (!p) throw notFound();
-    return { product: p };
-  },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.product.title} — Samara Encanto Convites` },
-          { name: "description", content: loaderData.product.description },
-          { property: "og:title", content: `${loaderData.product.title} — Samara Encanto Convites` },
-          { property: "og:description", content: loaderData.product.description },
-        ]
-      : [{ title: "Convite — Samara Encanto Convites" }, { name: "robots", content: "noindex" }],
+  head: ({ params }) => ({
+    meta: [
+      { title: `Convite ${params.slug} — Samara Encanto Convites` },
+      { name: "description", content: "Convite digital personalizado com entrega em até 24h." },
+      { property: "og:title", content: `Convite ${params.slug} — Samara Encanto Convites` },
+      { property: "og:description", content: "Convite digital personalizado com entrega em até 24h." },
+    ],
   }),
-  notFoundComponent: () => (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-        <h1 className="font-display text-3xl">Convite não encontrado</h1>
-        <Link to="/categorias" className="mt-4 inline-block font-bold text-primary">Ver todos os convites</Link>
-      </div>
-      <Footer />
-    </div>
-  ),
   component: ProductPage,
 });
 
 function ProductPage() {
-  const { product } = Route.useLoaderData();
-  const related = products.filter((p) => p.slug !== product.slug).slice(0, 4);
+  const { slug } = Route.useParams();
+  const { data: product, isLoading } = useStoreProduct(slug);
+  const { data: catalog } = useStoreCatalog();
+  const related = (catalog?.products ?? []).filter((p) => p.slug !== slug).slice(0, 4);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="py-24 text-center text-muted-foreground">Carregando convite...</div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="mx-auto max-w-3xl px-4 py-24 text-center">
+          <h1 className="font-display text-3xl">Convite não encontrado</h1>
+          <Link to="/categorias" className="mt-4 inline-block font-bold text-primary">Ver todos os convites</Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,7 +75,9 @@ function ProductPage() {
           </div>
 
           <div>
-            <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{product.categoryName}</span>
+            {product.categoryName && (
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{product.categoryName}</span>
+            )}
             <h1 className="mt-1 font-display text-3xl md:text-4xl">{product.title}</h1>
 
             <div className="mt-4 flex items-end gap-3">
@@ -110,20 +121,24 @@ function ProductPage() {
               <Heart className="h-4 w-4" /> Salvar nos favoritos
             </button>
 
-            <div className="mt-8 flex flex-wrap gap-2">
-              {product.tags.map((t: string) => (
-                <span key={t} className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">#{t}</span>
-              ))}
-            </div>
+            {product.tags.length > 0 && (
+              <div className="mt-8 flex flex-wrap gap-2">
+                {product.tags.map((t: string) => (
+                  <span key={t} className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">#{t}</span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="mt-20">
-          <h2 className="mb-6 font-display text-2xl">Você também pode gostar</h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {related.map((p) => <ProductCard key={p.slug} product={p} />)}
+        {related.length > 0 && (
+          <div className="mt-20">
+            <h2 className="mb-6 font-display text-2xl">Você também pode gostar</h2>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              {related.map((p) => <ProductCard key={p.slug} product={p} />)}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <Footer />
     </div>

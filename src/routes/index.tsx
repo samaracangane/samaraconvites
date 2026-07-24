@@ -5,7 +5,7 @@ import { Hero } from "@/components/site/Hero";
 import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SectionTitle } from "@/components/site/SectionTitle";
-import { products } from "@/lib/mock-data";
+import { useStoreCatalog } from "@/lib/store-queries";
 import { ArrowRight, Star, Heart, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -25,6 +25,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { data } = useStoreCatalog();
+  const products = data?.products ?? [];
   const featured = products.filter((p) => p.featured);
   const bestsellers = products.filter((p) => p.bestseller);
   const news = products.filter((p) => p.isNew);
@@ -50,12 +52,14 @@ function Home() {
       </section>
 
       {/* Destaques */}
-      <section id="destaques" className="mx-auto max-w-7xl px-4 py-8">
-        <SectionTitle eyebrow="Feitos com amor" title="Convites em destaque" />
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {featured.map((p) => <ProductCard key={p.slug} product={p} />)}
-        </div>
-      </section>
+      {featured.length > 0 && (
+        <section id="destaques" className="mx-auto max-w-7xl px-4 py-8">
+          <SectionTitle eyebrow="Feitos com amor" title="Convites em destaque" />
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {featured.map((p) => <ProductCard key={p.slug} product={p} />)}
+          </div>
+        </section>
+      )}
 
       {/* Banner de promo */}
       <section className="mx-auto max-w-7xl px-4 py-14">
@@ -83,21 +87,23 @@ function Home() {
         </div>
       </section>
 
-      {/* Mais vendidos */}
-      <section className="mx-auto max-w-7xl px-4 py-8">
-        <SectionTitle eyebrow="Amados por todos" title="Mais vendidos" />
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {bestsellers.map((p) => <ProductCard key={p.slug} product={p} />)}
-        </div>
-      </section>
+      {bestsellers.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-8">
+          <SectionTitle eyebrow="Amados por todos" title="Mais vendidos" />
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {bestsellers.map((p) => <ProductCard key={p.slug} product={p} />)}
+          </div>
+        </section>
+      )}
 
-      {/* Novidades */}
-      <section className="mx-auto max-w-7xl px-4 py-14">
-        <SectionTitle eyebrow="Recém-chegados" title="Novidades da vitrine" />
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {news.map((p) => <ProductCard key={p.slug} product={p} />)}
-        </div>
-      </section>
+      {news.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-14">
+          <SectionTitle eyebrow="Recém-chegados" title="Novidades da vitrine" />
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {news.map((p) => <ProductCard key={p.slug} product={p} />)}
+          </div>
+        </section>
+      )}
 
       {/* Promoções */}
       {promos.length > 0 && (
