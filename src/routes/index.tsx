@@ -5,7 +5,7 @@ import { Hero } from "@/components/site/Hero";
 import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SectionTitle } from "@/components/site/SectionTitle";
-import { products } from "@/lib/mock-data";
+import { useStoreCatalog } from "@/lib/store-queries";
 import { ArrowRight, Star, Heart, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -25,6 +25,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { data } = useStoreCatalog();
+  const products = data?.products ?? [];
   const featured = products.filter((p) => p.featured);
   const bestsellers = products.filter((p) => p.bestseller);
   const news = products.filter((p) => p.isNew);
