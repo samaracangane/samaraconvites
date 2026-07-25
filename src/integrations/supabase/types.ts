@@ -136,6 +136,7 @@ export type Database = {
           active: boolean
           bestseller: boolean
           category_id: string | null
+          cover_index: number
           created_at: string
           delivery_hours: number
           description: string | null
@@ -159,6 +160,7 @@ export type Database = {
           active?: boolean
           bestseller?: boolean
           category_id?: string | null
+          cover_index?: number
           created_at?: string
           delivery_hours?: number
           description?: string | null
@@ -182,6 +184,7 @@ export type Database = {
           active?: boolean
           bestseller?: boolean
           category_id?: string | null
+          cover_index?: number
           created_at?: string
           delivery_hours?: number
           description?: string | null
