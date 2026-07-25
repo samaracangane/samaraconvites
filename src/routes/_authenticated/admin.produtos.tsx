@@ -37,6 +37,7 @@ type Product = {
   on_sale: boolean;
   sort_order: number;
   active: boolean;
+  cover_index: number;
 };
 
 type Category = { id: string; name: string };
@@ -54,6 +55,7 @@ const empty: Partial<Product> = {
   on_sale: false,
   sort_order: 0,
   active: true,
+  cover_index: 0,
 };
 
 function ProductsAdmin() {
