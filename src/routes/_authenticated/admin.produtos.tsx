@@ -206,9 +206,15 @@ function ProductForm({
         <Textarea rows={3} value={v.description ?? ""} onChange={(e) => set("description", e.target.value)} />
       </F>
 
-      <MediaInput label="Imagem principal" value={v.image_url} onChange={(url) => set("image_url", url)} folder="produtos" />
+      <MediaInput label="Imagem principal (capa)" value={v.image_url} onChange={(url) => set("image_url", url)} folder="produtos" />
+      <MultiMediaInput
+        label="Galeria de imagens (9:16)"
+        value={v.gallery ?? []}
+        onChange={(urls) => set("gallery", urls)}
+        folder="produtos"
+      />
       <MediaInput
-        label="Vídeo (opcional)"
+        label="Vídeo (opcional — exibido como primeira mídia quando o tipo for Vídeo)"
         value={v.video_url}
         onChange={(url) => set("video_url", url)}
         accept="video/*"
