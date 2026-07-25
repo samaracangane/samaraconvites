@@ -32,7 +32,17 @@ function ProductPage() {
         ...product.gallery.map((url) => ({ type: "image" as const, url })),
       ]
     : [];
-  const [activeIdx, setActiveIdx] = useState(0);
+  // coverIndex: -1 = video first; 0..n = gallery index.
+  // When video exists it occupies index 0 of mediaItems, so gallery index i → mediaItems[i+1].
+  const initialIdx = (() => {
+    if (!product) return 0;
+    const ci = product.coverIndex ?? 0;
+    if (hasVideo && ci === -1) return 0;
+    const offset = hasVideo ? 1 : 0;
+    const idx = offset + Math.max(0, ci === -1 ? 0 : ci);
+    return Math.min(idx, mediaItems.length - 1);
+  })();
+  const [activeIdx, setActiveIdx] = useState(initialIdx);
   const active = mediaItems[activeIdx] ?? mediaItems[0];
 
   if (isLoading) {
