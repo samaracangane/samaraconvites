@@ -27,6 +27,7 @@ type Product = {
   old_price: number | null;
   image_url: string | null;
   video_url: string | null;
+  gallery: string[] | null;
   description: string | null;
   delivery_hours: number;
   tags: string[];
