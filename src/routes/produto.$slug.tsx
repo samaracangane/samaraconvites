@@ -25,6 +25,16 @@ function ProductPage() {
   const { data: catalog } = useStoreCatalog();
   const related = (catalog?.products ?? []).filter((p) => p.slug !== slug).slice(0, 4);
 
+  const hasVideo = product?.type === "video" && !!product.videoUrl;
+  const mediaItems: Array<{ type: "video" | "image"; url: string; poster?: string }> = product
+    ? [
+        ...(hasVideo ? [{ type: "video" as const, url: product.videoUrl!, poster: product.image }] : []),
+        ...product.gallery.map((url) => ({ type: "image" as const, url })),
+      ]
+    : [];
+  const [activeIdx, setActiveIdx] = useState(0);
+  const active = mediaItems[activeIdx] ?? mediaItems[0];
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -59,17 +69,43 @@ function ProductPage() {
         <div className="grid gap-8 md:grid-cols-2">
           <div>
             <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-muted shadow-card">
-              <img src={product.image} alt={product.title} className="aspect-[4/5] w-full object-cover" />
-              {product.type === "video" && (
+              {active?.type === "video" ? (
+                <video
+                  key={active.url}
+                  src={active.url}
+                  poster={active.poster}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="aspect-[9/16] w-full object-cover"
+                />
+              ) : (
+                <img src={active?.url ?? product.image} alt={product.title} className="aspect-[9/16] w-full object-cover" />
+              )}
+              {product.type === "video" && active?.type !== "video" && (
                 <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-background/90 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-foreground shadow-soft backdrop-blur">
                   <Play className="h-3 w-3" /> Vídeo animado
                 </span>
               )}
             </div>
-            {product.gallery.length > 1 && (
-              <div className="mt-3 grid grid-cols-4 gap-2">
-                {product.gallery.map((img: string, i: number) => (
-                  <img key={i} src={img} alt="" className="aspect-square rounded-xl object-cover" />
+            {mediaItems.length > 1 && (
+              <div className="mt-3 grid grid-cols-5 gap-2">
+                {mediaItems.map((m, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setActiveIdx(i)}
+                    className={`relative aspect-[9/16] overflow-hidden rounded-xl border-2 transition ${
+                      i === activeIdx ? "border-primary" : "border-transparent"
+                    }`}
+                  >
+                    <img src={m.type === "video" ? m.poster ?? product.image : m.url} alt="" className="h-full w-full object-cover" />
+                    {m.type === "video" && (
+                      <span className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <Play className="h-5 w-5 fill-white text-white" />
+                      </span>
+                    )}
+                  </button>
                 ))}
               </div>
             )}
