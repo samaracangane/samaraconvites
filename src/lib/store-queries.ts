@@ -33,6 +33,7 @@ type ProductRow = {
   on_sale: boolean;
   active: boolean;
   sort_order: number;
+  cover_index: number | null;
 };
 
 const PLACEHOLDER =
