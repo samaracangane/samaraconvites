@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader, ResourceTable } from "@/components/admin/ResourceTable";
 import { MediaInput } from "@/components/admin/MediaInput";
+import { MultiMediaInput } from "@/components/admin/MultiMediaInput";
 import { useResourceList, useResourceMutations } from "@/lib/admin-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
