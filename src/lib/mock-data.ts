@@ -30,6 +30,7 @@ export type Product = {
   bestseller?: boolean;
   isNew?: boolean;
   onSale?: boolean;
+  coverIndex?: number;
 };
 
 export const categories: Category[] = [
