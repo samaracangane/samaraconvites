@@ -3,19 +3,33 @@ import { Play, Sparkles } from "lucide-react";
 import { formatBRL, type Product } from "@/lib/mock-data";
 
 export function ProductCard({ product }: { product: Product }) {
+  const showVideo = product.type === "video" && !!product.videoUrl;
   return (
     <Link
       to="/produto/$slug"
       params={{ slug: product.slug }}
       className="group relative flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-glow"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-        <img
-          src={product.image}
-          alt={product.title}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+      <div className="relative aspect-[9/16] overflow-hidden bg-muted">
+        {showVideo ? (
+          <video
+            src={product.videoUrl}
+            poster={product.image}
+            muted
+            loop
+            playsInline
+            autoPlay
+            preload="metadata"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <img
+            src={product.image}
+            alt={product.title}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        )}
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
           {product.isNew && (
             <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-soft">Novo</span>
