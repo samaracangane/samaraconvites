@@ -34,15 +34,19 @@ function ProductPage() {
     : [];
   // coverIndex: -1 = video first; 0..n = gallery index.
   // When video exists it occupies index 0 of mediaItems, so gallery index i → mediaItems[i+1].
-  const initialIdx = (() => {
-    if (!product) return 0;
+  const [activeIdx, setActiveIdx] = useState(0);
+  useEffect(() => {
+    if (!product || mediaItems.length === 0) return;
     const ci = product.coverIndex ?? 0;
-    if (hasVideo && ci === -1) return 0;
+    if (hasVideo && ci === -1) {
+      setActiveIdx(0);
+      return;
+    }
     const offset = hasVideo ? 1 : 0;
     const idx = offset + Math.max(0, ci === -1 ? 0 : ci);
-    return Math.min(idx, mediaItems.length - 1);
-  })();
-  const [activeIdx, setActiveIdx] = useState(initialIdx);
+    setActiveIdx(Math.min(idx, mediaItems.length - 1));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.slug]);
   const active = mediaItems[activeIdx] ?? mediaItems[0];
 
   if (isLoading) {
