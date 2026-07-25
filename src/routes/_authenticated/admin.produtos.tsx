@@ -37,6 +37,7 @@ type Product = {
   on_sale: boolean;
   sort_order: number;
   active: boolean;
+  cover_index: number;
 };
 
 type Category = { id: string; name: string };
@@ -54,6 +55,7 @@ const empty: Partial<Product> = {
   on_sale: false,
   sort_order: 0,
   active: true,
+  cover_index: 0,
 };
 
 function ProductsAdmin() {
@@ -220,6 +222,25 @@ function ProductForm({
         accept="video/*"
         folder="produtos"
       />
+
+      <F label="Primeira mídia exibida na página do produto">
+        <Select
+          value={String(v.cover_index ?? 0)}
+          onValueChange={(val) => set("cover_index", Number(val))}
+        >
+          <SelectTrigger><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {v.video_url && <SelectItem value="-1">🎬 Vídeo</SelectItem>}
+            {(v.gallery ?? []).map((_, i) => (
+              <SelectItem key={i} value={String(i)}>Imagem {i + 1} da galeria</SelectItem>
+            ))}
+            {(!v.gallery || v.gallery.length === 0) && !v.video_url && (
+              <SelectItem value="0">Imagem principal (capa)</SelectItem>
+            )}
+          </SelectContent>
+        </Select>
+      </F>
+
 
       <div className="grid grid-cols-2 gap-3 rounded-lg border border-border/60 bg-muted/30 p-3 sm:grid-cols-4">
         {(["featured","bestseller","is_new","on_sale"] as const).map((k) => (

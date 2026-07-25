@@ -1,0 +1,1 @@
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS cover_index integer NOT NULL DEFAULT 0;

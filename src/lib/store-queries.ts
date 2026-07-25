@@ -33,6 +33,7 @@ type ProductRow = {
   on_sale: boolean;
   active: boolean;
   sort_order: number;
+  cover_index: number | null;
 };
 
 const PLACEHOLDER =
@@ -82,6 +83,7 @@ export function mapProduct(p: ProductRow, catBySlug: Record<string, string> = {}
     bestseller: p.bestseller,
     isNew: p.is_new,
     onSale: p.on_sale,
+    coverIndex: p.cover_index ?? 0,
   };
 }
 
