@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader, ResourceTable } from "@/components/admin/ResourceTable";
 import { MediaInput } from "@/components/admin/MediaInput";
+import { MultiMediaInput } from "@/components/admin/MultiMediaInput";
 import { useResourceList, useResourceMutations } from "@/lib/admin-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,7 @@ type Product = {
   old_price: number | null;
   image_url: string | null;
   video_url: string | null;
+  gallery: string[] | null;
   description: string | null;
   delivery_hours: number;
   tags: string[];
@@ -204,9 +206,15 @@ function ProductForm({
         <Textarea rows={3} value={v.description ?? ""} onChange={(e) => set("description", e.target.value)} />
       </F>
 
-      <MediaInput label="Imagem principal" value={v.image_url} onChange={(url) => set("image_url", url)} folder="produtos" />
+      <MediaInput label="Imagem principal (capa)" value={v.image_url} onChange={(url) => set("image_url", url)} folder="produtos" />
+      <MultiMediaInput
+        label="Galeria de imagens (9:16)"
+        value={v.gallery ?? []}
+        onChange={(urls) => set("gallery", urls)}
+        folder="produtos"
+      />
       <MediaInput
-        label="Vídeo (opcional)"
+        label="Vídeo (opcional — exibido como primeira mídia quando o tipo for Vídeo)"
         value={v.video_url}
         onChange={(url) => set("video_url", url)}
         accept="video/*"

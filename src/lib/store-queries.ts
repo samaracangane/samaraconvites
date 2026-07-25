@@ -74,6 +74,7 @@ export function mapProduct(p: ProductRow, catBySlug: Record<string, string> = {}
     oldPrice: p.old_price ? Number(p.old_price) : undefined,
     image,
     gallery,
+    videoUrl: p.video_url ?? undefined,
     description: p.description ?? "",
     deliveryHours: p.delivery_hours,
     tags: p.tags ?? [],

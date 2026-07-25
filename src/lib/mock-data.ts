@@ -22,6 +22,7 @@ export type Product = {
   oldPrice?: number;
   image: string;
   gallery: string[];
+  videoUrl?: string;
   description: string;
   deliveryHours: number;
   tags: string[];
