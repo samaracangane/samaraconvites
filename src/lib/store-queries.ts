@@ -83,6 +83,7 @@ export function mapProduct(p: ProductRow, catBySlug: Record<string, string> = {}
     bestseller: p.bestseller,
     isNew: p.is_new,
     onSale: p.on_sale,
+    coverIndex: p.cover_index ?? 0,
   };
 }
 
