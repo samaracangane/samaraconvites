@@ -4,7 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SectionTitle } from "@/components/site/SectionTitle";
-import { products } from "@/lib/mock-data";
+import { useStoreCatalog } from "@/lib/store-queries";
 
 export const Route = createFileRoute("/categorias")({
   head: () => ({
@@ -19,6 +19,9 @@ export const Route = createFileRoute("/categorias")({
 });
 
 function Categorias() {
+  const { data, isLoading } = useStoreCatalog();
+  const products = data?.products ?? [];
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -34,9 +37,21 @@ function Categorias() {
 
         <div className="mt-16">
           <SectionTitle eyebrow="Toda a vitrine" title="Convites disponíveis" />
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {products.map((p) => <ProductCard key={p.slug} product={p} />)}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="aspect-[9/16] animate-pulse rounded-2xl bg-muted/60" />
+              ))}
+            </div>
+          ) : products.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+              Nenhum convite cadastrado ainda. ✨
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              {products.map((p) => <ProductCard key={p.slug} product={p} />)}
+            </div>
+          )}
         </div>
       </div>
       <Footer />
