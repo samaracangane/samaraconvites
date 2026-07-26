@@ -115,6 +115,24 @@ function Home() {
         </section>
       )}
 
+      {/* Todos os convites (fallback — sempre visível quando há produtos) */}
+      {products.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-8">
+          <SectionTitle
+            eyebrow="Vitrine completa"
+            title="Todos os convites"
+            action={
+              <Link to="/categorias" className="hidden items-center gap-1 text-sm font-bold text-primary hover:underline md:inline-flex">
+                Ver tudo <ArrowRight className="h-4 w-4" />
+              </Link>
+            }
+          />
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {products.slice(0, 8).map((p) => <ProductCard key={p.slug} product={p} />)}
+          </div>
+        </section>
+      )}
+
       {/* Como funciona */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <SectionTitle eyebrow="Simples e rápido" title="Como funciona" />
