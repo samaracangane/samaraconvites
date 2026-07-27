@@ -98,6 +98,104 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          child_age: string | null
+          child_name: string
+          clothing_size: string | null
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          delivered_at: string | null
+          delivered_media_url: string | null
+          gift_type: string | null
+          id: string
+          message: string | null
+          music_url: string | null
+          notes: string | null
+          party_address: string | null
+          party_date: string | null
+          party_location: string | null
+          party_map_url: string | null
+          party_time: string | null
+          photo_url: string | null
+          price: number
+          product_id: string | null
+          product_slug: string
+          product_title: string
+          shoe_size: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          updated_at: string
+        }
+        Insert: {
+          child_age?: string | null
+          child_name: string
+          clothing_size?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          delivered_at?: string | null
+          delivered_media_url?: string | null
+          gift_type?: string | null
+          id?: string
+          message?: string | null
+          music_url?: string | null
+          notes?: string | null
+          party_address?: string | null
+          party_date?: string | null
+          party_location?: string | null
+          party_map_url?: string | null
+          party_time?: string | null
+          photo_url?: string | null
+          price?: number
+          product_id?: string | null
+          product_slug: string
+          product_title: string
+          shoe_size?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+        }
+        Update: {
+          child_age?: string | null
+          child_name?: string
+          clothing_size?: string | null
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivered_at?: string | null
+          delivered_media_url?: string | null
+          gift_type?: string | null
+          id?: string
+          message?: string | null
+          music_url?: string | null
+          notes?: string | null
+          party_address?: string | null
+          party_date?: string | null
+          party_location?: string | null
+          party_map_url?: string | null
+          party_time?: string | null
+          photo_url?: string | null
+          price?: number
+          product_id?: string | null
+          product_slug?: string
+          product_title?: string
+          shoe_size?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pages: {
         Row: {
           active: boolean
@@ -322,6 +420,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      order_status: "pending" | "paid" | "delivered" | "canceled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -450,6 +549,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      order_status: ["pending", "paid", "delivered", "canceled"],
     },
   },
 } as const
