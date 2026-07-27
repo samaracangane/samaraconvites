@@ -108,7 +108,11 @@ function PedidosPage() {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status, delivered_media_url }: { id: string; status: OrderStatus; delivered_media_url?: string | null }) => {
-      const patch: Record<string, unknown> = { status };
+      const patch: {
+        status: OrderStatus;
+        delivered_at?: string | null;
+        delivered_media_url?: string | null;
+      } = { status };
       if (status === "delivered") {
         patch.delivered_at = new Date().toISOString();
         if (delivered_media_url !== undefined) patch.delivered_media_url = delivered_media_url;
