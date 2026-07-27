@@ -3,8 +3,11 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { formatBRL } from "@/lib/mock-data";
 import { useStoreProduct } from "@/lib/store-queries";
+import { supabase } from "@/integrations/supabase/client";
+import { uploadMedia } from "@/lib/admin-media";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/personalizar/$slug")({
   head: ({ params }) => ({
