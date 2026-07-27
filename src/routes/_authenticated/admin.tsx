@@ -9,6 +9,7 @@ import {
   Image as ImageIcon,
   FileText,
   LayoutList,
+  ShoppingBag,
   LogOut,
 } from "lucide-react";
 
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 const nav: NavItem[] = [
   { to: "/admin", label: "Início", icon: LayoutDashboard, exact: true },
+  { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/categorias", label: "Categorias", icon: Tags },
   { to: "/admin/banners", label: "Banners", icon: ImageIcon },

@@ -13,6 +13,7 @@ export type Category = {
 };
 
 export type Product = {
+  id?: string;
   slug: string;
   title: string;
   category: string;

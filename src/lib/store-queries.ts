@@ -66,6 +66,7 @@ export function mapProduct(p: ProductRow, catBySlug: Record<string, string> = {}
   const image = p.image_url ?? PLACEHOLDER;
   const gallery = Array.isArray(p.gallery) && p.gallery.length > 0 ? (p.gallery as string[]) : [image];
   return {
+    id: p.id,
     slug: p.slug,
     title: p.title,
     category: categorySlug ?? "",
