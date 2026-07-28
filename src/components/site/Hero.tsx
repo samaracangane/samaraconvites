@@ -43,12 +43,13 @@ export function Hero() {
         <div className="relative">
           <div className="absolute -inset-4 rounded-[3rem] bg-gradient-candy opacity-40 blur-2xl" />
           <div className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/40 shadow-glow backdrop-blur">
-            <img
-              src={hero}
-              alt="Convites infantis encantadores"
+            <video
+              src={heroVideo.url}
               className="h-full w-full object-cover"
-              width={1600}
-              height={1000}
+              autoPlay
+              loop
+              muted
+              playsInline
             />
           </div>
           <div className="absolute -bottom-6 -left-4 hidden rounded-2xl bg-white/90 px-4 py-3 shadow-glow backdrop-blur md:block">
