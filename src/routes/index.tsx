@@ -5,6 +5,7 @@ import { Hero } from "@/components/site/Hero";
 import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SectionTitle } from "@/components/site/SectionTitle";
+import { AnimatedBanner } from "@/components/site/AnimatedBanner";
 import { useStoreCatalog } from "@/lib/store-queries";
 import { ArrowRight, Star, Heart, Sparkles } from "lucide-react";
 
@@ -36,6 +37,8 @@ function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
+      <AnimatedBanner />
+
 
       {/* Categorias */}
       <section className="mx-auto max-w-7xl px-4 py-14">

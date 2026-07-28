@@ -176,6 +176,14 @@
   0%, 100% { transform: rotate(-2deg); }
   50% { transform: rotate(2deg); }
 }
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
 
 @utility animate-float {
   animation: float 6s ease-in-out infinite;
@@ -186,3 +194,10 @@
 @utility animate-wiggle {
   animation: wiggle 3s ease-in-out infinite;
 }
+@utility animate-gradient-shift {
+  animation: gradient-shift 12s ease-in-out infinite;
+}
+@utility animate-shimmer {
+  animation: shimmer 2.2s linear infinite;
+}
+
