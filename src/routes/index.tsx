@@ -37,6 +37,8 @@ function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
+      <AnimatedBanner />
+
 
       {/* Categorias */}
       <section className="mx-auto max-w-7xl px-4 py-14">
