@@ -5,6 +5,7 @@ import { Hero } from "@/components/site/Hero";
 import { CategoryGrid } from "@/components/site/CategoryGrid";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SectionTitle } from "@/components/site/SectionTitle";
+import { AnimatedBanner } from "@/components/site/AnimatedBanner";
 import { useStoreCatalog } from "@/lib/store-queries";
 import { ArrowRight, Star, Heart, Sparkles } from "lucide-react";
 
