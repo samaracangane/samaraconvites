@@ -36,7 +36,7 @@ function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
-      <AnimatedBanner />
+
 
 
       {/* Categorias */}
