@@ -24,9 +24,10 @@ export function Header() {
 
         <nav className="hidden items-center gap-7 text-sm font-semibold text-foreground/75 md:flex">
           <Link to="/" className="hover:text-primary transition-colors">Início</Link>
-          <Link to="/categorias" className="hover:text-primary transition-colors">Categorias</Link>
-          <Link to="/sobre" className="hover:text-primary transition-colors">Sobre</Link>
+          <Link to="/categorias" className="hover:text-primary transition-colors">Produtos</Link>
           <Link to="/contato" className="hover:text-primary transition-colors">Contato</Link>
+          <Link to="/sobre" className="hover:text-primary transition-colors">Quem somos</Link>
+          <Link to="/" hash="como-comprar" className="hover:text-primary transition-colors">Como comprar</Link>
         </nav>
 
         <div className="flex items-center gap-2">
