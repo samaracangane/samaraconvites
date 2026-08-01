@@ -44,6 +44,8 @@
   --color-mint: var(--mint);
   --color-sunny: var(--sunny);
   --color-cream: var(--cream);
+  --color-navbar: var(--navbar);
+  --color-navbar-foreground: var(--navbar-foreground);
 
   --font-display: "Fredoka", "Poppins", system-ui, sans-serif;
   --font-script: "Caveat", "Comic Sans MS", cursive;
