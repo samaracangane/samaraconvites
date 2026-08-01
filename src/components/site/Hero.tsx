@@ -43,13 +43,12 @@ export function Hero() {
         <div className="relative">
           <div className="absolute -inset-4 rounded-[3rem] bg-gradient-candy opacity-40 blur-2xl" />
           <div className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-white/40 shadow-glow backdrop-blur">
-            <video
-              src={heroVideo.url}
+            <img
+              src={heroInvite}
+              alt="Convite digital personalizado — exemplo encantador de festa infantil"
+              width={1024}
+              height={1280}
               className="h-full w-full object-cover"
-              autoPlay
-              loop
-              muted
-              playsInline
             />
           </div>
           <div className="absolute -bottom-6 -left-4 hidden rounded-2xl bg-white/90 px-4 py-3 shadow-glow backdrop-blur md:block">
