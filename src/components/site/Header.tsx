@@ -24,9 +24,10 @@ export function Header() {
 
         <nav className="hidden items-center gap-7 text-sm font-semibold text-foreground/75 md:flex">
           <Link to="/" className="hover:text-primary transition-colors">Início</Link>
-          <Link to="/categorias" className="hover:text-primary transition-colors">Categorias</Link>
-          <Link to="/sobre" className="hover:text-primary transition-colors">Sobre</Link>
+          <Link to="/categorias" className="hover:text-primary transition-colors">Produtos</Link>
           <Link to="/contato" className="hover:text-primary transition-colors">Contato</Link>
+          <Link to="/sobre" className="hover:text-primary transition-colors">Quem somos</Link>
+          <Link to="/" hash="como-comprar" className="hover:text-primary transition-colors">Como comprar</Link>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -45,13 +46,25 @@ export function Header() {
         </div>
       </div>
 
+      {/* Barra roxa de navegação (estilo do banner) */}
+      <div className="bg-navbar text-navbar-foreground">
+        <nav className="mx-auto flex max-w-7xl items-center gap-6 overflow-x-auto px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider md:justify-center md:gap-10 md:text-sm">
+          <Link to="/" className="whitespace-nowrap transition-opacity hover:opacity-75">Início</Link>
+          <Link to="/categorias" className="whitespace-nowrap transition-opacity hover:opacity-75">Produtos</Link>
+          <Link to="/contato" className="whitespace-nowrap transition-opacity hover:opacity-75">Contato</Link>
+          <Link to="/sobre" className="whitespace-nowrap transition-opacity hover:opacity-75">Quem somos</Link>
+          <Link to="/" hash="como-comprar" className="whitespace-nowrap transition-opacity hover:opacity-75">Como comprar</Link>
+        </nav>
+      </div>
+
       {open && (
         <div className="border-t border-border/60 bg-background/95 md:hidden">
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3 text-sm font-semibold">
             <Link to="/" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Início</Link>
-            <Link to="/categorias" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Categorias</Link>
-            <Link to="/sobre" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Sobre</Link>
+            <Link to="/categorias" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Produtos</Link>
             <Link to="/contato" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Contato</Link>
+            <Link to="/sobre" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Quem somos</Link>
+            <Link to="/" hash="como-comprar" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Como comprar</Link>
             <div className="mt-2 border-t border-border/60 pt-2 text-xs uppercase tracking-wider text-muted-foreground">Categorias populares</div>
             {categories.slice(0, 6).map((c) => (
               <Link
@@ -67,6 +80,7 @@ export function Header() {
           </nav>
         </div>
       )}
+
     </header>
   );
 }

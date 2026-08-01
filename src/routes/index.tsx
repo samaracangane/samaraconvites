@@ -136,7 +136,8 @@ function Home() {
       )}
 
       {/* Como funciona */}
-      <section className="mx-auto max-w-7xl px-4 py-16">
+      <section id="como-comprar" className="mx-auto max-w-7xl px-4 py-16 scroll-mt-32">
+
         <SectionTitle eyebrow="Simples e rápido" title="Como funciona" />
         <div className="grid gap-5 md:grid-cols-3">
           {[
