@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles as SparklesIcon } from "lucide-react";
-import heroVideo from "@/assets/hero-princess.mp4.asset.json";
+import heroInvite from "@/assets/hero-invite.png";
 import { Sparkles } from "./Sparkles";
 
 export function Hero() {
