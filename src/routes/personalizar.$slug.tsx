@@ -3,7 +3,9 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { formatBRL } from "@/lib/mock-data";
 import { useStoreProduct } from "@/lib/store-queries";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { createOrder, startOrderCheckout } from "@/lib/orders.functions";
+import { getPaddleEnvironment } from "@/lib/paddle";
 import { uploadMedia } from "@/lib/admin-media";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
@@ -48,6 +50,8 @@ function PersonalizarPage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [musicFile, setMusicFile] = useState<File | null>(null);
   const { openCheckout } = usePaddleCheckout();
+  const createOrderFn = useServerFn(createOrder);
+  const startCheckoutFn = useServerFn(startOrderCheckout);
 
   if (isLoading) {
     return (
@@ -110,45 +114,42 @@ function PersonalizarPage() {
         try { music_url = await uploadMedia(musicFile, "orders"); } catch { /* opcional */ }
       }
 
-      const customerEmail = get("customer_email");
-      const orderId = crypto.randomUUID();
-      const { error } = await supabase.from("orders").insert({
-        id: orderId,
-        product_id: product.id,
-        product_title: product.title,
-        product_slug: product.slug,
-        price: product.price,
-        status: "pending",
-        customer_name: get("customer_name") ?? "",
-        customer_email: customerEmail,
-        customer_phone: get("customer_phone") ?? "",
-        child_name: get("child_name") ?? "",
-        child_age: get("child_age"),
-        party_date: get("party_date"),
-        party_time: get("party_time"),
-        party_location: get("party_location"),
-        party_address: get("party_address"),
-        party_map_url: get("party_map_url"),
-        message: get("message"),
-        clothing_size: get("clothing_size"),
-        shoe_size: get("shoe_size"),
-        gift_type: get("gift_type"),
-        notes: get("notes"),
-        photo_url,
-        music_url,
+      const { orderId } = await createOrderFn({
+        data: {
+          productId: product.id,
+          environment: getPaddleEnvironment(),
+          customer_name: get("customer_name") ?? "",
+          customer_email: get("customer_email") ?? "",
+          customer_phone: get("customer_phone") ?? "",
+          child_name: get("child_name") ?? "",
+          child_age: get("child_age"),
+          party_date: get("party_date"),
+          party_time: get("party_time"),
+          party_location: get("party_location"),
+          party_address: get("party_address"),
+          party_map_url: get("party_map_url"),
+          message: get("message"),
+          clothing_size: get("clothing_size"),
+          shoe_size: get("shoe_size"),
+          gift_type: get("gift_type"),
+          notes: get("notes"),
+          photo_url,
+          music_url,
+        },
       });
-      if (error) throw error;
 
-      if (product.paddlePriceId) {
+      try {
+        const { transactionId } = await startCheckoutFn({ data: { orderId } });
         await openCheckout({
-          priceId: product.paddlePriceId,
-          customerEmail: customerEmail ?? undefined,
-          customData: { orderId },
+          transactionId,
           successUrl: `${window.location.origin}/meu-pedido/${orderId}`,
         });
-      } else {
-        setSubmitted(true);
+      } catch (checkoutError) {
+        console.error(checkoutError);
+        toast.error("Pedido salvo, mas não conseguimos abrir o pagamento. Abra o link do seu pedido para tentar de novo.");
+        window.location.href = `/meu-pedido/${orderId}`;
       }
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar pedido");
     } finally {
@@ -184,7 +185,7 @@ function PersonalizarPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Seu nome" required><input required name="customer_name" className={inputCls} placeholder="Ex: Maria" /></Field>
                 <Field label="Celular com DDD" required><input required name="customer_phone" type="tel" className={inputCls} placeholder="(11) 99999-9999" /></Field>
-                <Field label="E-mail"><input name="customer_email" type="email" className={inputCls} placeholder="voce@email.com" /></Field>
+                <Field label="E-mail" required hint="Enviamos aqui a confirmação do pagamento e o convite pronto."><input required name="customer_email" type="email" className={inputCls} placeholder="voce@email.com" /></Field>
               </div>
             </section>
 

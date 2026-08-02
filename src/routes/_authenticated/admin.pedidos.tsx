@@ -6,6 +6,8 @@ import { formatBRL } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CheckCircle2, X, ExternalLink, Trash2, Search } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { deliverOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/pedidos")({
   component: PedidosPage,
@@ -84,6 +86,7 @@ function PedidosPage() {
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
   const [search, setSearch] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
+  const deliverOrderFn = useServerFn(deliverOrder);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: orders.length, pending: 0, paid: 0, delivered: 0, canceled: 0 };
@@ -108,24 +111,25 @@ function PedidosPage() {
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status, delivered_media_url }: { id: string; status: OrderStatus; delivered_media_url?: string | null }) => {
-      const patch: {
-        status: OrderStatus;
-        delivered_at?: string | null;
-        delivered_media_url?: string | null;
-      } = { status };
+      // Entrega passa pelo servidor: valida o link e avisa a cliente por e-mail.
       if (status === "delivered") {
-        patch.delivered_at = new Date().toISOString();
-        if (delivered_media_url !== undefined) patch.delivered_media_url = delivered_media_url;
+        if (!delivered_media_url) {
+          throw new Error("Cole o link do convite pronto antes de marcar como entregue");
+        }
+        const res = await deliverOrderFn({ data: { orderId: id, mediaUrl: delivered_media_url } });
+        return res.emailSent ? "Entregue — e-mail enviado à cliente" : "Entregue (sem e-mail: cliente sem endereço válido)";
       }
-      const { error } = await supabase.from("orders").update(patch).eq("id", id);
+      const { error } = await supabase.from("orders").update({ status }).eq("id", id);
       if (error) throw error;
+      return "Pedido atualizado";
     },
-    onSuccess: () => {
-      toast.success("Pedido atualizado");
+    onSuccess: (msg) => {
+      toast.success(msg);
       qc.invalidateQueries({ queryKey: ["orders"] });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro ao atualizar"),
   });
+
 
   const removeOrder = useMutation({
     mutationFn: async (id: string) => {

@@ -1,27 +1,25 @@
 import { useState } from "react";
-import { initializePaddle, getPaddlePriceId } from "@/lib/paddle";
+import { initializePaddle } from "@/lib/paddle";
 
+/**
+ * Abre o checkout Paddle a partir de uma transação criada no servidor.
+ * O valor cobrado é definido no servidor a partir do preço do pedido,
+ * então nunca há divergência entre o que a loja mostra e o que é cobrado.
+ */
 export function usePaddleCheckout() {
   const [loading, setLoading] = useState(false);
 
   const openCheckout = async (options: {
-    priceId: string;
-    quantity?: number;
-    customerEmail?: string;
-    customData?: Record<string, string>;
+    transactionId: string;
     successUrl?: string;
+    onClose?: () => void;
   }) => {
     setLoading(true);
     try {
       await initializePaddle();
-      const paddlePriceId = await getPaddlePriceId(options.priceId);
 
       window.Paddle.Checkout.open({
-        items: [{ priceId: paddlePriceId, quantity: options.quantity ?? 1 }],
-        customer: options.customerEmail
-          ? { email: options.customerEmail, address: { countryCode: "BR" } }
-          : undefined,
-        customData: options.customData,
+        transactionId: options.transactionId,
         settings: {
           displayMode: "overlay",
           successUrl: options.successUrl || `${window.location.origin}/pedido-confirmado`,

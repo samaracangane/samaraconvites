@@ -2,7 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { getPublicOrder } from "@/lib/orders.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
+import { toast } from "sonner";
+import { getPublicOrder, startOrderCheckout } from "@/lib/orders.functions";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { CheckCircle2, Clock, Download, Sparkles, XCircle } from "lucide-react";
 
 export const Route = createFileRoute("/meu-pedido/$id")({
@@ -44,6 +48,22 @@ function MeuPedido() {
     queryFn: () => getPublicOrder({ data: { orderId: id } }),
     refetchInterval: 30000,
   });
+
+  const startCheckoutFn = useServerFn(startOrderCheckout);
+  const { openCheckout } = usePaddleCheckout();
+  const [paying, setPaying] = useState(false);
+
+  async function handlePayAgain() {
+    setPaying(true);
+    try {
+      const { transactionId } = await startCheckoutFn({ data: { orderId: id } });
+      await openCheckout({ transactionId, successUrl: window.location.href });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível abrir o pagamento");
+    } finally {
+      setPaying(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,6 +119,23 @@ function MeuPedido() {
                 </ol>
               )}
             </div>
+
+            {data.status === "pending" && (
+              <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Ainda não recebemos o pagamento deste pedido. Se o Pix expirou ou a tela fechou,
+                  você pode retomar agora.
+                </p>
+                <button
+                  type="button"
+                  onClick={handlePayAgain}
+                  disabled={paying}
+                  className="mt-4 inline-flex items-center justify-center rounded-full bg-primary-gradient px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
+                >
+                  {paying ? "Abrindo pagamento…" : "Pagar agora"}
+                </button>
+              </div>
+            )}
 
             {data.delivered_media_url && (
               <a

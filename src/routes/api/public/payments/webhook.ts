@@ -18,27 +18,73 @@ function getOrderId(data: any): string | null {
   return data?.customData?.orderId ?? null;
 }
 
-async function handleTransactionCompleted(data: any) {
+/** Total efetivamente cobrado, em centavos. */
+function getGrandTotalCents(data: any): number | null {
+  const raw =
+    data?.details?.totals?.grandTotal ??
+    data?.details?.totals?.grand_total ??
+    null;
+  if (raw == null) return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
+
+async function findOrder(supabase: ReturnType<typeof getSupabase>, data: any) {
   const orderId = getOrderId(data);
-  if (!orderId) {
-    console.warn("transaction.completed sem orderId em customData");
-    return;
+  if (orderId) {
+    const { data: byId } = await supabase.from("orders").select("*").eq("id", orderId).maybeSingle();
+    if (byId) return byId as any;
   }
+  const txnId = data?.id ?? data?.transactionId ?? data?.transaction_id;
+  if (txnId) {
+    const { data: byTxn } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("paddle_transaction_id", txnId)
+      .maybeSingle();
+    if (byTxn) return byTxn as any;
+  }
+  return null;
+}
 
+async function handleTransactionCompleted(data: any, env: PaddleEnv) {
   const supabase = getSupabase();
+  const order = await findOrder(supabase, data);
 
-  // Idempotência: se já está marcado como pago com essa transação, nada a fazer.
-  const { data: existing } = await supabase
-    .from("orders")
-    .select("*")
-    .eq("id", orderId)
-    .maybeSingle();
-
-  if (!existing) {
-    console.warn("Pedido não encontrado:", orderId);
+  if (!order) {
+    console.warn("Pedido não encontrado para a transação", data?.id);
     return;
   }
-  if ((existing as any).status === "paid" && (existing as any).paddle_transaction_id === data.id) {
+
+  // Um pagamento de teste nunca pode confirmar um pedido real (e vice-versa).
+  const orderEnv = (order.environment ?? "sandbox") as PaddleEnv;
+  if (orderEnv !== env) {
+    console.error(
+      `Ambiente divergente: pedido ${order.id} é "${orderEnv}", webhook chegou como "${env}". Ignorado.`,
+    );
+    return;
+  }
+
+  // Idempotência.
+  if (order.status === "paid" && order.paddle_transaction_id === data.id) return;
+  if (order.status === "delivered") return;
+
+  // Confere se o valor cobrado bate com o valor do pedido.
+  const paidCents = getGrandTotalCents(data);
+  const expectedCents = Math.round(Number(order.price ?? 0) * 100);
+  if (paidCents != null && paidCents + 1 < expectedCents) {
+    console.error(
+      `Valor divergente no pedido ${order.id}: cobrado ${paidCents}, esperado ${expectedCents}. Pedido mantido como pendente.`,
+    );
+    await supabase
+      .from("orders")
+      .update({
+        amount_paid: paidCents / 100,
+        paddle_transaction_id: data.id,
+        notes: `${order.notes ? order.notes + "\n" : ""}[atenção] valor pago (${(paidCents / 100).toFixed(2)}) diferente do preço do pedido (${(expectedCents / 100).toFixed(2)})`,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", order.id);
     return;
   }
 
@@ -47,10 +93,12 @@ async function handleTransactionCompleted(data: any) {
     .update({
       status: "paid",
       paddle_transaction_id: data.id,
+      paddle_customer_id: data.customerId ?? order.paddle_customer_id ?? null,
+      amount_paid: paidCents != null ? paidCents / 100 : Number(order.price ?? 0),
       paid_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
-    .eq("id", orderId)
+    .eq("id", order.id)
     .select("*")
     .maybeSingle();
 
@@ -59,36 +107,31 @@ async function handleTransactionCompleted(data: any) {
     throw error;
   }
 
-  if (updated) {
-    await notifyOrderPaid(updated as any);
-  }
+  if (updated) await notifyOrderPaid(updated as any);
 }
 
 async function handlePaymentFailed(data: any) {
-  const orderId = getOrderId(data);
-  if (!orderId) return;
-  await getSupabase()
+  const supabase = getSupabase();
+  const order = await findOrder(supabase, data);
+  if (!order) return;
+  console.log("Pagamento recusado para o pedido", order.id);
+  await supabase
     .from("orders")
     .update({ updated_at: new Date().toISOString() })
-    .eq("id", orderId)
+    .eq("id", order.id)
     .eq("status", "pending");
-  console.log("Pagamento recusado para o pedido", orderId);
 }
 
 async function handleRefundOrCancel(data: any) {
-  // adjustment.* traz transactionId; transaction.canceled traz o próprio id.
-  const transactionId = data?.transactionId ?? data?.transaction_id ?? data?.id;
-  const orderId = getOrderId(data);
+  const supabase = getSupabase();
+  const order = await findOrder(supabase, data);
+  if (!order) return;
+  if (order.status === "canceled") return;
 
-  const query = getSupabase()
+  await supabase
     .from("orders")
-    .update({ status: "canceled", updated_at: new Date().toISOString() });
-
-  if (orderId) {
-    await query.eq("id", orderId);
-  } else if (transactionId) {
-    await query.eq("paddle_transaction_id", transactionId);
-  }
+    .update({ status: "canceled", updated_at: new Date().toISOString() })
+    .eq("id", order.id);
 }
 
 async function handleWebhook(req: Request, env: PaddleEnv) {
@@ -96,7 +139,7 @@ async function handleWebhook(req: Request, env: PaddleEnv) {
 
   switch (event.eventType) {
     case EventName.TransactionCompleted:
-      await handleTransactionCompleted(event.data);
+      await handleTransactionCompleted(event.data, env);
       break;
     case EventName.TransactionPaymentFailed:
       await handlePaymentFailed(event.data);
@@ -110,7 +153,6 @@ async function handleWebhook(req: Request, env: PaddleEnv) {
       console.log("Evento não tratado:", event.eventType);
   }
 }
-
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
