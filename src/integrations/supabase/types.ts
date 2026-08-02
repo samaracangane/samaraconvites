@@ -100,6 +100,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          amount_paid: number | null
           child_age: string | null
           child_name: string
           clothing_size: string | null
@@ -109,11 +110,13 @@ export type Database = {
           customer_phone: string
           delivered_at: string | null
           delivered_media_url: string | null
+          environment: string
           gift_type: string | null
           id: string
           message: string | null
           music_url: string | null
           notes: string | null
+          paddle_customer_id: string | null
           paddle_transaction_id: string | null
           paid_at: string | null
           party_address: string | null
@@ -129,8 +132,10 @@ export type Database = {
           shoe_size: string | null
           status: Database["public"]["Enums"]["order_status"]
           updated_at: string
+          user_id: string | null
         }
         Insert: {
+          amount_paid?: number | null
           child_age?: string | null
           child_name: string
           clothing_size?: string | null
@@ -140,11 +145,13 @@ export type Database = {
           customer_phone: string
           delivered_at?: string | null
           delivered_media_url?: string | null
+          environment?: string
           gift_type?: string | null
           id?: string
           message?: string | null
           music_url?: string | null
           notes?: string | null
+          paddle_customer_id?: string | null
           paddle_transaction_id?: string | null
           paid_at?: string | null
           party_address?: string | null
@@ -160,8 +167,10 @@ export type Database = {
           shoe_size?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
+          amount_paid?: number | null
           child_age?: string | null
           child_name?: string
           clothing_size?: string | null
@@ -171,11 +180,13 @@ export type Database = {
           customer_phone?: string
           delivered_at?: string | null
           delivered_media_url?: string | null
+          environment?: string
           gift_type?: string | null
           id?: string
           message?: string | null
           music_url?: string | null
           notes?: string | null
+          paddle_customer_id?: string | null
           paddle_transaction_id?: string | null
           paid_at?: string | null
           party_address?: string | null
@@ -191,6 +202,7 @@ export type Database = {
           shoe_size?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
