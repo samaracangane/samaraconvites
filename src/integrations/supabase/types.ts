@@ -114,6 +114,8 @@ export type Database = {
           message: string | null
           music_url: string | null
           notes: string | null
+          paddle_transaction_id: string | null
+          paid_at: string | null
           party_address: string | null
           party_date: string | null
           party_location: string | null
@@ -143,6 +145,8 @@ export type Database = {
           message?: string | null
           music_url?: string | null
           notes?: string | null
+          paddle_transaction_id?: string | null
+          paid_at?: string | null
           party_address?: string | null
           party_date?: string | null
           party_location?: string | null
@@ -172,6 +176,8 @@ export type Database = {
           message?: string | null
           music_url?: string | null
           notes?: string | null
+          paddle_transaction_id?: string | null
+          paid_at?: string | null
           party_address?: string | null
           party_date?: string | null
           party_location?: string | null
@@ -245,6 +251,7 @@ export type Database = {
           is_new: boolean
           old_price: number | null
           on_sale: boolean
+          paddle_price_id: string | null
           price: number
           slug: string
           sort_order: number
@@ -269,6 +276,7 @@ export type Database = {
           is_new?: boolean
           old_price?: number | null
           on_sale?: boolean
+          paddle_price_id?: string | null
           price?: number
           slug: string
           sort_order?: number
@@ -293,6 +301,7 @@ export type Database = {
           is_new?: boolean
           old_price?: number | null
           on_sale?: boolean
+          paddle_price_id?: string | null
           price?: number
           slug?: string
           sort_order?: number
