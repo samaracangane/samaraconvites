@@ -240,7 +240,19 @@ function OrderDetail({
   saving: boolean;
 }) {
   const [deliveredUrl, setDeliveredUrl] = useState(order.delivered_media_url ?? "");
-  const waLink = `https://wa.me/${order.customer_phone.replace(/\D/g, "")}`;
+  const digits = order.customer_phone.replace(/\D/g, "");
+  const intlPhone = digits.length <= 11 ? `55${digits}` : digits;
+  const waLink = `https://wa.me/${intlPhone}`;
+  const trackUrl =
+    typeof window !== "undefined" ? `${window.location.origin}/meu-pedido/${order.id}` : "";
+  const waMessage =
+    order.status === "delivered"
+      ? `Oi, ${order.customer_name}! 💗 O convite "${order.product_title}" do(a) ${order.child_name} está pronto!${order.delivered_media_url ? ` Baixe aqui: ${order.delivered_media_url}` : ""}`
+      : order.status === "paid"
+        ? `Oi, ${order.customer_name}! 💗 Recebi seu pagamento do convite "${order.product_title}" do(a) ${order.child_name}. Já comecei a produção! Acompanhe aqui: ${trackUrl}`
+        : `Oi, ${order.customer_name}! 💗 Recebi seu pedido do convite "${order.product_title}" do(a) ${order.child_name}. Acompanhe aqui: ${trackUrl}`;
+  const waSendLink = `${waLink}?text=${encodeURIComponent(waMessage)}`;
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4" onClick={onClose}>
