@@ -6,6 +6,8 @@ import { formatBRL } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CheckCircle2, X, ExternalLink, Trash2, Search } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { deliverOrder } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/pedidos")({
   component: PedidosPage,
@@ -84,6 +86,7 @@ function PedidosPage() {
   const [filter, setFilter] = useState<OrderStatus | "all">("all");
   const [search, setSearch] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
+  const deliverOrderFn = useServerFn(deliverOrder);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: orders.length, pending: 0, paid: 0, delivered: 0, canceled: 0 };
