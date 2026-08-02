@@ -38,6 +38,7 @@ type Product = {
   sort_order: number;
   active: boolean;
   cover_index: number;
+  paddle_price_id: string | null;
 };
 
 type Category = { id: string; name: string };
@@ -192,6 +193,13 @@ function ProductForm({
         </F>
         <F label="Preço antigo (opcional)">
           <Input type="number" step="0.01" value={v.old_price ?? ""} onChange={(e) => set("old_price", e.target.value ? Number(e.target.value) : null)} />
+        </F>
+        <F label="ID do preço no pagamento">
+          <Input
+            value={v.paddle_price_id ?? ""}
+            placeholder="ex: convite_princesa"
+            onChange={(e) => set("paddle_price_id", e.target.value.trim() || null)}
+          />
         </F>
         <F label="Prazo de entrega (horas)">
           <Input type="number" value={v.delivery_hours ?? 24} onChange={(e) => set("delivery_hours", Number(e.target.value))} />
