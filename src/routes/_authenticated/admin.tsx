@@ -1,6 +1,8 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { useSaleAlerts } from "@/hooks/use-sale-alerts";
 import { supabase } from "@/integrations/supabase/client";
+
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
