@@ -3,10 +3,10 @@ import { createClient } from "@supabase/supabase-js";
 import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
 import { notifyOrderPaid } from "@/lib/order-notifications.server";
 
-let _supabase: ReturnType<typeof createClient> | null = null;
+let _supabase: ReturnType<typeof createClient<any>> | null = null;
 function getSupabase() {
   if (!_supabase) {
-    _supabase = createClient(
+    _supabase = createClient<any>(
       process.env["SUPABASE_URL"]!,
       process.env["SUPABASE_SERVICE_ROLE_KEY"]!,
     );
@@ -69,10 +69,7 @@ async function handlePaymentFailed(data: any) {
   if (!orderId) return;
   await getSupabase()
     .from("orders")
-    .update({
-      notes_payment: null,
-      updated_at: new Date().toISOString(),
-    } as any)
+    .update({ updated_at: new Date().toISOString() })
     .eq("id", orderId)
     .eq("status", "pending");
   console.log("Pagamento recusado para o pedido", orderId);
