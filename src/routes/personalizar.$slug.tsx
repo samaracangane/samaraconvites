@@ -144,7 +144,7 @@ function PersonalizarPage() {
           priceId: product.paddlePriceId,
           customerEmail: customerEmail ?? undefined,
           customData: { orderId },
-          successUrl: `${window.location.origin}/pedido-confirmado`,
+          successUrl: `${window.location.origin}/meu-pedido/${orderId}`,
         });
       } else {
         setSubmitted(true);

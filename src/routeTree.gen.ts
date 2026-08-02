@@ -18,6 +18,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as PersonalizarSlugRouteImport } from './routes/personalizar.$slug'
+import { Route as MeuPedidoIdRouteImport } from './routes/meu-pedido.$id'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -71,6 +72,11 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
 const PersonalizarSlugRoute = PersonalizarSlugRouteImport.update({
   id: '/personalizar/$slug',
   path: '/personalizar/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeuPedidoIdRoute = MeuPedidoIdRouteImport.update({
+  id: '/meu-pedido/$id',
+  path: '/meu-pedido/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriaSlugRoute = CategoriaSlugRouteImport.update({
@@ -140,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/meu-pedido/$id': typeof MeuPedidoIdRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/pedido-confirmado': typeof PedidoConfirmadoRoute
   '/sobre': typeof SobreRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/meu-pedido/$id': typeof MeuPedidoIdRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/sobre': typeof SobreRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
+  '/meu-pedido/$id': typeof MeuPedidoIdRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/admin'
     | '/categoria/$slug'
+    | '/meu-pedido/$id'
     | '/personalizar/$slug'
     | '/produto/$slug'
     | '/admin/banners'
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/pedido-confirmado'
     | '/sobre'
     | '/categoria/$slug'
+    | '/meu-pedido/$id'
     | '/personalizar/$slug'
     | '/produto/$slug'
     | '/admin/banners'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/_authenticated/admin'
     | '/categoria/$slug'
+    | '/meu-pedido/$id'
     | '/personalizar/$slug'
     | '/produto/$slug'
     | '/_authenticated/admin/banners'
@@ -264,6 +276,7 @@ export interface RootRouteChildren {
   PedidoConfirmadoRoute: typeof PedidoConfirmadoRoute
   SobreRoute: typeof SobreRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
+  MeuPedidoIdRoute: typeof MeuPedidoIdRoute
   PersonalizarSlugRoute: typeof PersonalizarSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/personalizar/$slug'
       fullPath: '/personalizar/$slug'
       preLoaderRoute: typeof PersonalizarSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meu-pedido/$id': {
+      id: '/meu-pedido/$id'
+      path: '/meu-pedido/$id'
+      fullPath: '/meu-pedido/$id'
+      preLoaderRoute: typeof MeuPedidoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categoria/$slug': {
@@ -450,6 +470,7 @@ const rootRouteChildren: RootRouteChildren = {
   PedidoConfirmadoRoute: PedidoConfirmadoRoute,
   SobreRoute: SobreRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
+  MeuPedidoIdRoute: MeuPedidoIdRoute,
   PersonalizarSlugRoute: PersonalizarSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

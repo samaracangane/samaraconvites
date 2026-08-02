@@ -75,13 +75,20 @@ async function handlePaymentFailed(data: any) {
   console.log("Pagamento recusado para o pedido", orderId);
 }
 
-async function handleRefund(data: any) {
-  const transactionId = data?.transactionId ?? data?.id;
-  if (!transactionId) return;
-  await getSupabase()
+async function handleRefundOrCancel(data: any) {
+  // adjustment.* traz transactionId; transaction.canceled traz o próprio id.
+  const transactionId = data?.transactionId ?? data?.transaction_id ?? data?.id;
+  const orderId = getOrderId(data);
+
+  const query = getSupabase()
     .from("orders")
-    .update({ status: "canceled", updated_at: new Date().toISOString() })
-    .eq("paddle_transaction_id", transactionId);
+    .update({ status: "canceled", updated_at: new Date().toISOString() });
+
+  if (orderId) {
+    await query.eq("id", orderId);
+  } else if (transactionId) {
+    await query.eq("paddle_transaction_id", transactionId);
+  }
 }
 
 async function handleWebhook(req: Request, env: PaddleEnv) {
@@ -94,14 +101,16 @@ async function handleWebhook(req: Request, env: PaddleEnv) {
     case EventName.TransactionPaymentFailed:
       await handlePaymentFailed(event.data);
       break;
-    case "adjustment.created" as any:
-    case EventName.TransactionRevised:
-      await handleRefund(event.data);
+    case EventName.TransactionCanceled:
+    case EventName.AdjustmentCreated:
+    case EventName.AdjustmentUpdated:
+      await handleRefundOrCancel(event.data);
       break;
     default:
       console.log("Evento não tratado:", event.eventType);
   }
 }
+
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {

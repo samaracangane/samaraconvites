@@ -240,7 +240,19 @@ function OrderDetail({
   saving: boolean;
 }) {
   const [deliveredUrl, setDeliveredUrl] = useState(order.delivered_media_url ?? "");
-  const waLink = `https://wa.me/${order.customer_phone.replace(/\D/g, "")}`;
+  const digits = order.customer_phone.replace(/\D/g, "");
+  const intlPhone = digits.length <= 11 ? `55${digits}` : digits;
+  const waLink = `https://wa.me/${intlPhone}`;
+  const trackUrl =
+    typeof window !== "undefined" ? `${window.location.origin}/meu-pedido/${order.id}` : "";
+  const waMessage =
+    order.status === "delivered"
+      ? `Oi, ${order.customer_name}! 💗 O convite "${order.product_title}" do(a) ${order.child_name} está pronto!${order.delivered_media_url ? ` Baixe aqui: ${order.delivered_media_url}` : ""}`
+      : order.status === "paid"
+        ? `Oi, ${order.customer_name}! 💗 Recebi seu pagamento do convite "${order.product_title}" do(a) ${order.child_name}. Já comecei a produção! Acompanhe aqui: ${trackUrl}`
+        : `Oi, ${order.customer_name}! 💗 Recebi seu pedido do convite "${order.product_title}" do(a) ${order.child_name}. Acompanhe aqui: ${trackUrl}`;
+  const waSendLink = `${waLink}?text=${encodeURIComponent(waMessage)}`;
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4" onClick={onClose}>
@@ -267,6 +279,25 @@ function OrderDetail({
             Recebido em {new Date(order.created_at).toLocaleString("pt-BR")}
           </span>
         </div>
+
+        <div className="mb-5 flex flex-wrap gap-2">
+          <a
+            href={waSendLink}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+          >
+            Falar no WhatsApp <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+          <button
+            type="button"
+            onClick={() => navigator.clipboard.writeText(trackUrl)}
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted"
+          >
+            Copiar link de acompanhamento
+          </button>
+        </div>
+
 
         <Section title="Cliente">
           <Row label="Nome" value={order.customer_name} />
