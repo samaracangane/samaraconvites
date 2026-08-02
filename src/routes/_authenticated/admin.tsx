@@ -34,6 +34,9 @@ function AdminLayout() {
   const { user, isAdmin, loading } = useCurrentUser();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useSaleAlerts(isAdmin);
+
+
 
   if (loading) {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Carregando...</div>;
