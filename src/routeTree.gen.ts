@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as PedidoConfirmadoRouteImport } from './routes/pedido-confirmado'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -31,6 +32,11 @@ import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/publi
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PedidoConfirmadoRoute = PedidoConfirmadoRouteImport.update({
+  id: '/pedido-confirmado',
+  path: '/pedido-confirmado',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatoRoute = ContatoRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
+  '/pedido-confirmado': typeof PedidoConfirmadoRoute
   '/sobre': typeof SobreRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
+  '/pedido-confirmado': typeof PedidoConfirmadoRoute
   '/sobre': typeof SobreRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
+  '/pedido-confirmado': typeof PedidoConfirmadoRoute
   '/sobre': typeof SobreRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/categorias'
     | '/contato'
+    | '/pedido-confirmado'
     | '/sobre'
     | '/admin'
     | '/categoria/$slug'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/categorias'
     | '/contato'
+    | '/pedido-confirmado'
     | '/sobre'
     | '/categoria/$slug'
     | '/personalizar/$slug'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/categorias'
     | '/contato'
+    | '/pedido-confirmado'
     | '/sobre'
     | '/_authenticated/admin'
     | '/categoria/$slug'
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CategoriasRoute: typeof CategoriasRoute
   ContatoRoute: typeof ContatoRoute
+  PedidoConfirmadoRoute: typeof PedidoConfirmadoRoute
   SobreRoute: typeof SobreRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   PersonalizarSlugRoute: typeof PersonalizarSlugRoute
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pedido-confirmado': {
+      id: '/pedido-confirmado'
+      path: '/pedido-confirmado'
+      fullPath: '/pedido-confirmado'
+      preLoaderRoute: typeof PedidoConfirmadoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contato': {
@@ -427,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CategoriasRoute: CategoriasRoute,
   ContatoRoute: ContatoRoute,
+  PedidoConfirmadoRoute: PedidoConfirmadoRoute,
   SobreRoute: SobreRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   PersonalizarSlugRoute: PersonalizarSlugRoute,

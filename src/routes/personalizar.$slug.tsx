@@ -8,6 +8,8 @@ import { uploadMedia } from "@/lib/admin-media";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 
 export const Route = createFileRoute("/personalizar/$slug")({
   head: ({ params }) => ({
@@ -45,6 +47,7 @@ function PersonalizarPage() {
   const [saving, setSaving] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [musicFile, setMusicFile] = useState<File | null>(null);
+  const { openCheckout } = usePaddleCheckout();
 
   if (isLoading) {
     return (
@@ -107,14 +110,15 @@ function PersonalizarPage() {
         try { music_url = await uploadMedia(musicFile, "orders"); } catch { /* opcional */ }
       }
 
-      const { error } = await supabase.from("orders").insert({
+      const customerEmail = get("customer_email");
+      const { data: order, error } = await supabase.from("orders").insert({
         product_id: product.id,
         product_title: product.title,
         product_slug: product.slug,
         price: product.price,
         status: "pending",
         customer_name: get("customer_name") ?? "",
-        customer_email: get("customer_email"),
+        customer_email: customerEmail,
         customer_phone: get("customer_phone") ?? "",
         child_name: get("child_name") ?? "",
         child_age: get("child_age"),
@@ -130,9 +134,19 @@ function PersonalizarPage() {
         notes: get("notes"),
         photo_url,
         music_url,
-      });
+      }).select("id").single();
       if (error) throw error;
-      setSubmitted(true);
+
+      if (product.paddlePriceId) {
+        await openCheckout({
+          priceId: product.paddlePriceId,
+          customerEmail: customerEmail ?? undefined,
+          customData: { orderId: order.id },
+          successUrl: `${window.location.origin}/pedido-confirmado`,
+        });
+      } else {
+        setSubmitted(true);
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar pedido");
     } finally {
@@ -142,6 +156,7 @@ function PersonalizarPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <PaymentTestModeBanner />
       <Header />
       <div className="mx-auto max-w-6xl px-4 py-10">
         <Link
@@ -223,10 +238,15 @@ function PersonalizarPage() {
               disabled={saving}
               className="mt-10 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary-gradient px-8 py-4 text-base font-bold text-primary-foreground shadow-glow transition hover:scale-[1.01] disabled:opacity-60"
             >
-              <Sparkles className="h-4 w-4" /> {saving ? "Enviando..." : "Enviar pedido"}
+              <Sparkles className="h-4 w-4" />{" "}
+              {saving
+                ? "Processando..."
+                : product.paddlePriceId
+                  ? `Pagar ${formatBRL(product.price)}`
+                  : "Enviar pedido"}
             </button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              O pagamento seguro será integrado em breve. Você receberá confirmação por e-mail e WhatsApp.
+              Pagamento seguro. Você receberá a confirmação por e-mail assim que o pagamento for aprovado.
             </p>
           </form>
 
