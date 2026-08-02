@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authenticated/admin.paginas'
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin.categorias'
 import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const SobreRoute = SobreRouteImport.update({
@@ -130,6 +131,12 @@ const AuthenticatedAdminBannersRoute =
     path: '/banners',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -157,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -177,6 +185,7 @@ export interface FileRoutesByTo {
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,6 +209,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/admin/vitrines'
     | '/admin/'
     | '/api/public/payments/webhook'
+    | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/admin/vitrines'
     | '/admin'
     | '/api/public/payments/webhook'
+    | '/lovable/email/transactional/preview'
   id:
     | '__root__'
     | '/'
@@ -265,6 +277,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/vitrines'
     | '/_authenticated/admin/'
     | '/api/public/payments/webhook'
+    | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -280,6 +293,7 @@ export interface RootRouteChildren {
   PersonalizarSlugRoute: typeof PersonalizarSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -417,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBannersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -474,7 +495,18 @@ const rootRouteChildren: RootRouteChildren = {
   PersonalizarSlugRoute: PersonalizarSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
