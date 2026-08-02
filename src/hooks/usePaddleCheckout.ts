@@ -18,13 +18,18 @@ export function usePaddleCheckout() {
 
       window.Paddle.Checkout.open({
         items: [{ priceId: paddlePriceId, quantity: options.quantity ?? 1 }],
-        customer: options.customerEmail ? { email: options.customerEmail } : undefined,
+        customer: options.customerEmail
+          ? { email: options.customerEmail, address: { countryCode: "BR" } }
+          : undefined,
         customData: options.customData,
         settings: {
           displayMode: "overlay",
           successUrl: options.successUrl || `${window.location.origin}/pedido-confirmado`,
           allowLogout: false,
           variant: "one-page",
+          locale: "pt-BR",
+          // Pix, cartão e demais métodos habilitados na conta Paddle
+          allowedPaymentMethods: ["pix", "card", "paypal", "google_pay", "apple_pay"],
         },
       });
     } finally {
