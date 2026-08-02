@@ -248,7 +248,8 @@ function PersonalizarPage() {
                   : "Enviar pedido"}
             </button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              Pagamento seguro. Você receberá a confirmação por e-mail assim que o pagamento for aprovado.
+              Pagamento seguro via Pix ou cartão. Você receberá a confirmação por e-mail assim que o
+              pagamento for aprovado.
             </p>
           </form>
 
