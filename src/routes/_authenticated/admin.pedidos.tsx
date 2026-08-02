@@ -280,6 +280,25 @@ function OrderDetail({
           </span>
         </div>
 
+        <div className="mb-5 flex flex-wrap gap-2">
+          <a
+            href={waSendLink}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-bold text-white hover:opacity-90"
+          >
+            Falar no WhatsApp <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+          <button
+            type="button"
+            onClick={() => navigator.clipboard.writeText(trackUrl)}
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted"
+          >
+            Copiar link de acompanhamento
+          </button>
+        </div>
+
+
         <Section title="Cliente">
           <Row label="Nome" value={order.customer_name} />
           <Row label="Celular" value={<a href={waLink} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">{order.customer_phone} <ExternalLink className="h-3 w-3" /></a>} />
