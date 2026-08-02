@@ -1,35 +1,35 @@
-## Checkout com Paddle nos convites digitais
+## Checkout Paddle + webhook + e-mails de confirmação
 
-Verifiquei o projeto: o Paddle ainda **não está ativo** (não há chaves nem código de pagamento), e a tabela `orders` não tem campos de transação. Hoje o formulário de `/personalizar/:slug` apenas grava o pedido como `pending` e mostra "pagamento será integrado em breve".
+Estado atual verificado: o Paddle **ainda não está ativo** (nenhuma chave nem código de pagamento no projeto) e não existe rota de webhook. Então o webhook precisa ser criado junto com a ativação — não há como só "testar" ainda.
 
-### O que será feito
+### 1. Ativar o Paddle
+Cria o ambiente de testes (sandbox) automaticamente, para validar todo o fluxo sem dinheiro real. Para receber de verdade, depois é necessária a verificação do negócio no Paddle.
 
-**1. Ativar o Paddle (ambiente de testes)**
-Cria automaticamente o sandbox — dá para testar o fluxo inteiro sem dinheiro real. Para receber de verdade depois, é preciso completar a verificação do negócio no Paddle (produtos desse tipo podem passar por revisão extra).
+### 2. Preços dos convites
+Nova coluna em `products` guardando o preço correspondente no Paddle, editável no painel admin, para o checkout cobrar sempre o valor do convite escolhido.
 
-**2. Cadastrar os preços**
-Cada convite ganha um preço correspondente no Paddle. Guardo o identificador do preço numa nova coluna em `products`, editável no painel admin, para que o valor cobrado seja sempre o do convite escolhido.
+### 3. Checkout em `/personalizar/:slug`
+1. Grava o pedido como `pending` com todos os dados da festa, foto e música;
+2. Abre o checkout do Paddle com e-mail do cliente e o número do pedido como referência;
+3. Ao concluir, leva para a página de confirmação.
 
-**3. Fluxo do checkout em `/personalizar/:slug`**
-O botão passa a:
-1. Validar o formulário e gravar o pedido com status `pending` (com foto, música e todos os dados da festa);
-2. Abrir o checkout do Paddle já com e-mail do cliente e o número do pedido como referência;
-3. Ao concluir, levar para uma página de confirmação ("Pagamento aprovado, seu convite está em produção").
-Se o cliente fechar o checkout, o pedido continua `pending` e pode ser retomado.
-
-**4. Confirmação automática (webhook)**
-Endpoint público que recebe os eventos do Paddle, valida a assinatura e atualiza o pedido sozinho:
+### 4. Webhook de pagamento
+Endpoint público que valida a assinatura do Paddle e atualiza o pedido sozinho:
 - pagamento aprovado → `paid`
+- recusado → continua `pending` (com aviso no painel)
 - reembolso/estorno → `canceled`
-Sem nenhuma ação manual sua.
 
-**5. Painel de pedidos**
-`/admin/pedidos` mostra o status real de pagamento e o identificador da transação, mantendo os botões de "entregue" e "cancelar".
+### 5. E-mails automáticos (você + cliente)
+Quando o pagamento é aprovado, o webhook dispara:
+- **Para você:** "Novo pedido pago" com nome, convite, dados da festa e link do painel;
+- **Para o cliente:** confirmação de pagamento com resumo e prazo de entrega.
+
+Pré-requisito: o envio de e-mails exige um **domínio próprio** configurado (ex.: `samaraconvites.com.br`, que você já tem). Vou abrir a configuração do domínio de e-mail no meio do processo — leva alguns minutos de propagação de DNS, mas o resto do fluxo continua funcionando.
+
+### 6. Teste do fluxo
+Com o sandbox ativo, faço um pedido de teste com cartão de teste do Paddle e confirmo: pedido criado → pagamento → status vira "pago" em `/admin/pedidos` → e-mails registrados. Reporto o resultado.
 
 ### Detalhes técnicos
 - Migração: `paddle_price_id` em `products`, `paddle_transaction_id` em `orders`.
-- Checkout via Paddle.js no cliente; webhook em `src/routes/api/public/paddle-webhook` com verificação de assinatura HMAC.
-- Impostos e compliance ficam com o Paddle (merchant of record), inclusive cobrança para clientes brasileiros. Taxa: 5% + US$0,50 por transação.
-
-### Ordem de execução
-Ativar Paddle → migração + preços → checkout → webhook → ajustes no admin.
+- Paddle.js no cliente; webhook em `src/routes/api/public/paddle-webhook` com verificação de assinatura HMAC e tratamento idempotente de reenvios.
+- E-mails via Lovable Emails (templates React Email com a identidade rosa/dourado da loja).
