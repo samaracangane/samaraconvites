@@ -110,45 +110,42 @@ function PersonalizarPage() {
         try { music_url = await uploadMedia(musicFile, "orders"); } catch { /* opcional */ }
       }
 
-      const customerEmail = get("customer_email");
-      const orderId = crypto.randomUUID();
-      const { error } = await supabase.from("orders").insert({
-        id: orderId,
-        product_id: product.id,
-        product_title: product.title,
-        product_slug: product.slug,
-        price: product.price,
-        status: "pending",
-        customer_name: get("customer_name") ?? "",
-        customer_email: customerEmail,
-        customer_phone: get("customer_phone") ?? "",
-        child_name: get("child_name") ?? "",
-        child_age: get("child_age"),
-        party_date: get("party_date"),
-        party_time: get("party_time"),
-        party_location: get("party_location"),
-        party_address: get("party_address"),
-        party_map_url: get("party_map_url"),
-        message: get("message"),
-        clothing_size: get("clothing_size"),
-        shoe_size: get("shoe_size"),
-        gift_type: get("gift_type"),
-        notes: get("notes"),
-        photo_url,
-        music_url,
+      const { orderId } = await createOrderFn({
+        data: {
+          productId: product.id,
+          environment: getPaddleEnvironment(),
+          customer_name: get("customer_name") ?? "",
+          customer_email: get("customer_email") ?? "",
+          customer_phone: get("customer_phone") ?? "",
+          child_name: get("child_name") ?? "",
+          child_age: get("child_age"),
+          party_date: get("party_date"),
+          party_time: get("party_time"),
+          party_location: get("party_location"),
+          party_address: get("party_address"),
+          party_map_url: get("party_map_url"),
+          message: get("message"),
+          clothing_size: get("clothing_size"),
+          shoe_size: get("shoe_size"),
+          gift_type: get("gift_type"),
+          notes: get("notes"),
+          photo_url,
+          music_url,
+        },
       });
-      if (error) throw error;
 
-      if (product.paddlePriceId) {
+      try {
+        const { transactionId } = await startCheckoutFn({ data: { orderId } });
         await openCheckout({
-          priceId: product.paddlePriceId,
-          customerEmail: customerEmail ?? undefined,
-          customData: { orderId },
+          transactionId,
           successUrl: `${window.location.origin}/meu-pedido/${orderId}`,
         });
-      } else {
-        setSubmitted(true);
+      } catch (checkoutError) {
+        console.error(checkoutError);
+        toast.error("Pedido salvo, mas não conseguimos abrir o pagamento. Abra o link do seu pedido para tentar de novo.");
+        window.location.href = `/meu-pedido/${orderId}`;
       }
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar pedido");
     } finally {
