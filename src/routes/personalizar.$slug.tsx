@@ -111,7 +111,9 @@ function PersonalizarPage() {
       }
 
       const customerEmail = get("customer_email");
-      const { data: order, error } = await supabase.from("orders").insert({
+      const orderId = crypto.randomUUID();
+      const { error } = await supabase.from("orders").insert({
+        id: orderId,
         product_id: product.id,
         product_title: product.title,
         product_slug: product.slug,
@@ -134,14 +136,14 @@ function PersonalizarPage() {
         notes: get("notes"),
         photo_url,
         music_url,
-      }).select("id").single();
+      });
       if (error) throw error;
 
       if (product.paddlePriceId) {
         await openCheckout({
           priceId: product.paddlePriceId,
           customerEmail: customerEmail ?? undefined,
-          customData: { orderId: order.id },
+          customData: { orderId },
           successUrl: `${window.location.origin}/pedido-confirmado`,
         });
       } else {
