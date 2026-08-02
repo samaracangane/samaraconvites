@@ -1,13 +1,34 @@
 import { ADMIN_EMAIL, type PaidOrder } from "@/lib/order-notifications.server";
+import { sendTemplateEmail } from "@/lib/email-templates/send-email";
+
+const SITE_URL = "https://www.samaraconvites.com.br";
 
 /**
- * Ponto único de envio dos e-mails de pedido pago.
- * Será ligado ao sistema de e-mails assim que o domínio de envio estiver configurado.
+ * Ponto único de envio dos e-mails de pedido pago (cliente + admin).
  */
 export async function sendOrderPaidEmails(order: PaidOrder, data: Record<string, unknown>) {
-  console.log("[emails] pedido pago (envio pendente de configuração de domínio)", {
-    admin: ADMIN_EMAIL,
-    customer: order.customer_email,
-    data,
-  });
+  const orderUrl = `${SITE_URL}/meu-pedido/${order.id}`;
+
+  if (order.customer_email) {
+    try {
+      const result = await sendTemplateEmail("order-paid-customer", order.customer_email, {
+        templateData: { ...data, orderUrl },
+        idempotencyKey: `order-paid-customer-${order.id}`,
+      });
+      if (!result.sent) {
+        console.warn("[emails] cliente suprimido", order.customer_email);
+      }
+    } catch (e) {
+      console.error("[emails] falha no e-mail do cliente", order.id, e);
+    }
+  }
+
+  try {
+    await sendTemplateEmail("order-paid-admin", ADMIN_EMAIL, {
+      templateData: { ...data, customerEmail: order.customer_email },
+      idempotencyKey: `order-paid-admin-${order.id}`,
+    });
+  } catch (e) {
+    console.error("[emails] falha no e-mail do admin", order.id, e);
+  }
 }
