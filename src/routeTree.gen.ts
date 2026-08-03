@@ -9,7 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as ReembolsoRouteImport } from './routes/reembolso'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PedidoConfirmadoRouteImport } from './routes/pedido-confirmado'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as CategoriasRouteImport } from './routes/categorias'
@@ -32,9 +35,24 @@ import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authent
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReembolsoRoute = ReembolsoRouteImport.update({
+  id: '/reembolso',
+  path: '/reembolso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PedidoConfirmadoRoute = PedidoConfirmadoRouteImport.update({
@@ -156,7 +174,10 @@ export interface FileRoutesByFullPath {
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/pedido-confirmado': typeof PedidoConfirmadoRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/reembolso': typeof ReembolsoRoute
   '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/meu-pedido/$id': typeof MeuPedidoIdRoute
@@ -179,7 +200,10 @@ export interface FileRoutesByTo {
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/pedido-confirmado': typeof PedidoConfirmadoRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/reembolso': typeof ReembolsoRoute
   '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/meu-pedido/$id': typeof MeuPedidoIdRoute
   '/pagina/$slug': typeof PaginaSlugRoute
@@ -203,7 +227,10 @@ export interface FileRoutesById {
   '/categorias': typeof CategoriasRoute
   '/contato': typeof ContatoRoute
   '/pedido-confirmado': typeof PedidoConfirmadoRoute
+  '/privacidade': typeof PrivacidadeRoute
+  '/reembolso': typeof ReembolsoRoute
   '/sobre': typeof SobreRoute
+  '/termos': typeof TermosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/meu-pedido/$id': typeof MeuPedidoIdRoute
@@ -228,7 +255,10 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/contato'
     | '/pedido-confirmado'
+    | '/privacidade'
+    | '/reembolso'
     | '/sobre'
+    | '/termos'
     | '/admin'
     | '/categoria/$slug'
     | '/meu-pedido/$id'
@@ -251,7 +281,10 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/contato'
     | '/pedido-confirmado'
+    | '/privacidade'
+    | '/reembolso'
     | '/sobre'
+    | '/termos'
     | '/categoria/$slug'
     | '/meu-pedido/$id'
     | '/pagina/$slug'
@@ -274,7 +307,10 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/contato'
     | '/pedido-confirmado'
+    | '/privacidade'
+    | '/reembolso'
     | '/sobre'
+    | '/termos'
     | '/_authenticated/admin'
     | '/categoria/$slug'
     | '/meu-pedido/$id'
@@ -299,7 +335,10 @@ export interface RootRouteChildren {
   CategoriasRoute: typeof CategoriasRoute
   ContatoRoute: typeof ContatoRoute
   PedidoConfirmadoRoute: typeof PedidoConfirmadoRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
+  ReembolsoRoute: typeof ReembolsoRoute
   SobreRoute: typeof SobreRoute
+  TermosRoute: typeof TermosRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   MeuPedidoIdRoute: typeof MeuPedidoIdRoute
   PaginaSlugRoute: typeof PaginaSlugRoute
@@ -311,11 +350,32 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sobre': {
       id: '/sobre'
       path: '/sobre'
       fullPath: '/sobre'
       preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reembolso': {
+      id: '/reembolso'
+      path: '/reembolso'
+      fullPath: '/reembolso'
+      preLoaderRoute: typeof ReembolsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pedido-confirmado': {
@@ -509,7 +569,10 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriasRoute: CategoriasRoute,
   ContatoRoute: ContatoRoute,
   PedidoConfirmadoRoute: PedidoConfirmadoRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
+  ReembolsoRoute: ReembolsoRoute,
   SobreRoute: SobreRoute,
+  TermosRoute: TermosRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   MeuPedidoIdRoute: MeuPedidoIdRoute,
   PaginaSlugRoute: PaginaSlugRoute,
@@ -521,3 +584,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
