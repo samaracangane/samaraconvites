@@ -18,6 +18,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProdutoSlugRouteImport } from './routes/produto.$slug'
 import { Route as PersonalizarSlugRouteImport } from './routes/personalizar.$slug'
+import { Route as PaginaSlugRouteImport } from './routes/pagina.$slug'
 import { Route as MeuPedidoIdRouteImport } from './routes/meu-pedido.$id'
 import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -73,6 +74,11 @@ const ProdutoSlugRoute = ProdutoSlugRouteImport.update({
 const PersonalizarSlugRoute = PersonalizarSlugRouteImport.update({
   id: '/personalizar/$slug',
   path: '/personalizar/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaginaSlugRoute = PaginaSlugRouteImport.update({
+  id: '/pagina/$slug',
+  path: '/pagina/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeuPedidoIdRoute = MeuPedidoIdRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/meu-pedido/$id': typeof MeuPedidoIdRoute
+  '/pagina/$slug': typeof PaginaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/sobre': typeof SobreRoute
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/meu-pedido/$id': typeof MeuPedidoIdRoute
+  '/pagina/$slug': typeof PaginaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categoria/$slug': typeof CategoriaSlugRoute
   '/meu-pedido/$id': typeof MeuPedidoIdRoute
+  '/pagina/$slug': typeof PaginaSlugRoute
   '/personalizar/$slug': typeof PersonalizarSlugRoute
   '/produto/$slug': typeof ProdutoSlugRoute
   '/_authenticated/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/categoria/$slug'
     | '/meu-pedido/$id'
+    | '/pagina/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
     | '/admin/banners'
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/sobre'
     | '/categoria/$slug'
     | '/meu-pedido/$id'
+    | '/pagina/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
     | '/admin/banners'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/categoria/$slug'
     | '/meu-pedido/$id'
+    | '/pagina/$slug'
     | '/personalizar/$slug'
     | '/produto/$slug'
     | '/_authenticated/admin/banners'
@@ -290,6 +302,7 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   CategoriaSlugRoute: typeof CategoriaSlugRoute
   MeuPedidoIdRoute: typeof MeuPedidoIdRoute
+  PaginaSlugRoute: typeof PaginaSlugRoute
   PersonalizarSlugRoute: typeof PersonalizarSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -359,6 +372,13 @@ declare module '@tanstack/react-router' {
       path: '/personalizar/$slug'
       fullPath: '/personalizar/$slug'
       preLoaderRoute: typeof PersonalizarSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pagina/$slug': {
+      id: '/pagina/$slug'
+      path: '/pagina/$slug'
+      fullPath: '/pagina/$slug'
+      preLoaderRoute: typeof PaginaSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/meu-pedido/$id': {
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   CategoriaSlugRoute: CategoriaSlugRoute,
   MeuPedidoIdRoute: MeuPedidoIdRoute,
+  PaginaSlugRoute: PaginaSlugRoute,
   PersonalizarSlugRoute: PersonalizarSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
@@ -500,13 +521,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
