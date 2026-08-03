@@ -177,3 +177,43 @@ export function useStoreCategory(slug: string) {
     },
   });
 }
+
+export type StorePage = {
+  id: string;
+  slug: string;
+  title: string;
+  content: string | null;
+  meta_description: string | null;
+};
+
+/** Páginas institucionais ativas criadas no admin (para menus/rodapé). */
+export function useStorePages() {
+  return useQuery({
+    queryKey: ["public", "pages"],
+    queryFn: async (): Promise<StorePage[]> => {
+      const { data, error } = await supabase
+        .from("pages")
+        .select("id,slug,title,content,meta_description")
+        .eq("active", true)
+        .order("title", { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as StorePage[];
+    },
+  });
+}
+
+export function useStorePage(slug: string) {
+  return useQuery({
+    queryKey: ["public", "page", slug],
+    queryFn: async (): Promise<StorePage | null> => {
+      const { data, error } = await supabase
+        .from("pages")
+        .select("id,slug,title,content,meta_description")
+        .eq("slug", slug)
+        .eq("active", true)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as StorePage) ?? null;
+    },
+  });
+}
