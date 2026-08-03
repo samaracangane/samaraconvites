@@ -7,7 +7,7 @@ export function Footer() {
   const { data: pages = [] } = useStorePages();
   return (
     <footer className="mt-24 border-t border-border/60 bg-gradient-to-b from-background to-muted/40">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-5">
         <div className="md:col-span-2">
           <img src={logo} alt="Samara Encanto Convites" className="h-14 w-auto" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
@@ -34,22 +34,23 @@ export function Footer() {
         <div>
           <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-foreground/80">Ajuda</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            {pages.length === 0 ? (
-              <>
-                <li>Como funciona</li>
-                <li>Prazo de entrega</li>
-                <li>Formas de pagamento</li>
-                <li>Perguntas frequentes</li>
-              </>
-            ) : (
-              pages.map((p) => (
-                <li key={p.id}>
-                  <Link to="/pagina/$slug" params={{ slug: p.slug }} className="hover:text-primary">
-                    {p.title}
-                  </Link>
-                </li>
-              ))
-            )}
+            <li><Link to="/reembolso" className="hover:text-primary">Reembolso</Link></li>
+            {pages.map((p) => (
+              <li key={p.id}>
+                <Link to="/pagina/$slug" params={{ slug: p.slug }} className="hover:text-primary">
+                  {p.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-foreground/80">Legal</h4>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/termos" className="hover:text-primary">Termos e Condições</Link></li>
+            <li><Link to="/privacidade" className="hover:text-primary">Política de Privacidade</Link></li>
+            <li><Link to="/reembolso" className="hover:text-primary">Política de Reembolso</Link></li>
           </ul>
         </div>
       </div>
