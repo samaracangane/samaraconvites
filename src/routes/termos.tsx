@@ -40,15 +40,20 @@ function TermosPage() {
           <section>
             <h2 className="font-display text-2xl text-foreground">1. Quem somos</h2>
             <p className="mt-2">
-              Este site é operado por <strong className="text-foreground">Samara Encanto Convites</strong>{" "}
-              ("nós", "nosso"). Ao comprar ou utilizar nossos serviços, você celebra um contrato
-              diretamente com a Samara Encanto Convites. Para falar conosco, use nossa{" "}
+              Este site é operado por <strong className="text-foreground">Samara Encanto Convites</strong>,
+              nome fantasia de <strong className="text-foreground">Samara Roberta Cangane</strong>, CPF
+              419.358.788-67, com sede em Monte Aprazível — SP, Brasil ("nós", "nosso"). Vendemos convites
+              digitais infantis personalizados, entregues exclusivamente em formato digital (imagem, vídeo ou
+              link interativo), sem envio de produto físico. Ao comprar ou utilizar nossos serviços, você
+              celebra um contrato diretamente conosco. Contato: WhatsApp (17) 99672-2089 · e-mail
+              srcangane@gmail.com · veja também nossa{" "}
               <Link to="/contato" className="text-primary underline">
                 página de contato
               </Link>
               .
             </p>
           </section>
+
 
           <section>
             <h2 className="font-display text-2xl text-foreground">2. Aceitação dos termos</h2>

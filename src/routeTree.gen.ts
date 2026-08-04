@@ -15,6 +15,7 @@ import { Route as ReembolsoRouteImport } from './routes/reembolso'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PedidoConfirmadoRouteImport } from './routes/pedido-confirmado'
 import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as ComoComprarRouteImport } from './routes/como-comprar'
 import { Route as CategoriasRouteImport } from './routes/categorias'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -63,6 +64,11 @@ const PedidoConfirmadoRoute = PedidoConfirmadoRouteImport.update({
 const ContatoRoute = ContatoRouteImport.update({
   id: '/contato',
   path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComoComprarRoute = ComoComprarRouteImport.update({
+  id: '/como-comprar',
+  path: '/como-comprar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriasRoute = CategoriasRouteImport.update({
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
+  '/como-comprar': typeof ComoComprarRoute
   '/contato': typeof ContatoRoute
   '/pedido-confirmado': typeof PedidoConfirmadoRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
+  '/como-comprar': typeof ComoComprarRoute
   '/contato': typeof ContatoRoute
   '/pedido-confirmado': typeof PedidoConfirmadoRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/categorias': typeof CategoriasRoute
+  '/como-comprar': typeof ComoComprarRoute
   '/contato': typeof ContatoRoute
   '/pedido-confirmado': typeof PedidoConfirmadoRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/categorias'
+    | '/como-comprar'
     | '/contato'
     | '/pedido-confirmado'
     | '/privacidade'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/categorias'
+    | '/como-comprar'
     | '/contato'
     | '/pedido-confirmado'
     | '/privacidade'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/categorias'
+    | '/como-comprar'
     | '/contato'
     | '/pedido-confirmado'
     | '/privacidade'
@@ -333,6 +345,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CategoriasRoute: typeof CategoriasRoute
+  ComoComprarRoute: typeof ComoComprarRoute
   ContatoRoute: typeof ContatoRoute
   PedidoConfirmadoRoute: typeof PedidoConfirmadoRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -390,6 +403,13 @@ declare module '@tanstack/react-router' {
       path: '/contato'
       fullPath: '/contato'
       preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/como-comprar': {
+      id: '/como-comprar'
+      path: '/como-comprar'
+      fullPath: '/como-comprar'
+      preLoaderRoute: typeof ComoComprarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categorias': {
@@ -567,6 +587,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CategoriasRoute: CategoriasRoute,
+  ComoComprarRoute: ComoComprarRoute,
   ContatoRoute: ContatoRoute,
   PedidoConfirmadoRoute: PedidoConfirmadoRoute,
   PrivacidadeRoute: PrivacidadeRoute,

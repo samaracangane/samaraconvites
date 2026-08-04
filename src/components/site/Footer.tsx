@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Instagram, Mail, MessageCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { useStorePages } from "@/lib/store-queries";
+import { BUSINESS, BUSINESS_ADDRESS } from "@/lib/business";
 
 export function Footer() {
   const { data: pages = [] } = useStorePages();
@@ -11,13 +12,27 @@ export function Footer() {
         <div className="md:col-span-2">
           <img src={logo} alt="Samara Encanto Convites" className="h-14 w-auto" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Convites digitais infantis feitos com muito carinho. Encanto,
-            magia e delicadeza para o momento mais especial da sua família.
+            Convites digitais infantis personalizados, entregues por download em
+            até 24 horas úteis. Encanto, magia e delicadeza para o momento mais
+            especial da sua família.
           </p>
+          <div className="mt-4 space-y-1 text-sm text-muted-foreground">
+            <p>
+              <a href={BUSINESS.whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
+                WhatsApp {BUSINESS.whatsappDisplay}
+              </a>
+            </p>
+            <p>
+              <a href={`mailto:${BUSINESS.email}`} className="hover:text-primary">
+                {BUSINESS.email}
+              </a>
+            </p>
+            <p>{BUSINESS_ADDRESS}</p>
+          </div>
           <div className="mt-5 flex gap-2">
-            <a href="#" aria-label="Instagram" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><Instagram className="h-4 w-4" /></a>
-            <a href="#" aria-label="WhatsApp" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><MessageCircle className="h-4 w-4" /></a>
-            <a href="#" aria-label="E-mail" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><Mail className="h-4 w-4" /></a>
+            <a href={BUSINESS.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><Instagram className="h-4 w-4" /></a>
+            <a href={BUSINESS.whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><MessageCircle className="h-4 w-4" /></a>
+            <a href={`mailto:${BUSINESS.email}`} aria-label="E-mail" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><Mail className="h-4 w-4" /></a>
           </div>
         </div>
 
@@ -34,6 +49,7 @@ export function Footer() {
         <div>
           <h4 className="mb-3 text-sm font-bold uppercase tracking-wider text-foreground/80">Ajuda</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/como-comprar" className="hover:text-primary">Como comprar</Link></li>
             <li><Link to="/reembolso" className="hover:text-primary">Reembolso</Link></li>
             {pages.map((p) => (
               <li key={p.id}>
@@ -54,9 +70,17 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-border/60 py-5 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Samara Encanto Convites · Feito com 💗 para momentos únicos
+      <div className="space-y-1 border-t border-border/60 py-5 text-center text-xs text-muted-foreground">
+        <p>
+          © {new Date().getFullYear()} {BUSINESS.brand} — {BUSINESS.legalName} · {BUSINESS.taxIdLabel}{" "}
+          {BUSINESS.taxId} · {BUSINESS_ADDRESS}
+        </p>
+        <p>
+          Nosso processo de pedidos é conduzido pela nossa revendedora online Paddle.com, Merchant of Record
+          de todos os nossos pedidos.
+        </p>
       </div>
     </footer>
   );
 }
+
