@@ -24,8 +24,25 @@ function Sobre() {
         <h1 className="mt-2 font-display text-4xl md:text-5xl">Feito com muito amor 💗</h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
           A Samara Encanto Convites nasceu do desejo de transformar cada convite em um pequeno momento de magia.
-          Cada arte é pensada com carinho, para que a festa das crianças seja inesquecível desde o primeiro convite recebido.
+          Somos um pequeno negócio brasileiro que cria e vende convites digitais infantis personalizados —
+          em imagem, vídeo ou link interativo — entregues por download, sem produto físico e sem frete.
         </p>
+        <div className="mx-auto mt-6 max-w-2xl rounded-3xl border border-border/60 bg-card p-6 text-left text-sm text-muted-foreground shadow-card">
+          <p>
+            <strong className="text-foreground">Vendedor:</strong> Samara Encanto Convites, nome fantasia de
+            Samara Roberta Cangane (CPF 419.358.788-67).
+          </p>
+          <p className="mt-1"><strong className="text-foreground">Endereço:</strong> Monte Aprazível — SP, Brasil.</p>
+          <p className="mt-1">
+            <strong className="text-foreground">Atendimento:</strong> WhatsApp (17) 99672-2089 · srcangane@gmail.com ·
+            segunda a sexta, das 9h às 18h.
+          </p>
+          <p className="mt-1">
+            <strong className="text-foreground">Pagamentos:</strong> processados pela Paddle.com, nossa revendedora
+            online e Merchant of Record de todos os pedidos.
+          </p>
+        </div>
+
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           {[
             { i: <Heart className="h-5 w-5" />, t: "Com carinho", d: "Cada detalhe é feito pensando na sua família." },
