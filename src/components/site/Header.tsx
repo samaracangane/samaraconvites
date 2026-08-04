@@ -27,7 +27,7 @@ export function Header() {
           <Link to="/categorias" className="hover:text-primary transition-colors">Produtos</Link>
           <Link to="/contato" className="hover:text-primary transition-colors">Contato</Link>
           <Link to="/sobre" className="hover:text-primary transition-colors">Quem somos</Link>
-          <Link to="/" hash="como-comprar" className="hover:text-primary transition-colors">Como comprar</Link>
+          <Link to="/como-comprar" className="hover:text-primary transition-colors">Como comprar</Link>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -53,7 +53,7 @@ export function Header() {
           <Link to="/categorias" className="whitespace-nowrap transition-opacity hover:opacity-75">Produtos</Link>
           <Link to="/contato" className="whitespace-nowrap transition-opacity hover:opacity-75">Contato</Link>
           <Link to="/sobre" className="whitespace-nowrap transition-opacity hover:opacity-75">Quem somos</Link>
-          <Link to="/" hash="como-comprar" className="whitespace-nowrap transition-opacity hover:opacity-75">Como comprar</Link>
+          <Link to="/como-comprar" className="whitespace-nowrap transition-opacity hover:opacity-75">Como comprar</Link>
         </nav>
       </div>
 
@@ -64,7 +64,7 @@ export function Header() {
             <Link to="/categorias" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Produtos</Link>
             <Link to="/contato" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Contato</Link>
             <Link to="/sobre" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Quem somos</Link>
-            <Link to="/" hash="como-comprar" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Como comprar</Link>
+            <Link to="/como-comprar" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Como comprar</Link>
             <div className="mt-2 border-t border-border/60 pt-2 text-xs uppercase tracking-wider text-muted-foreground">Categorias populares</div>
             {categories.slice(0, 6).map((c) => (
               <Link
