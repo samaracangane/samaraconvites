@@ -101,10 +101,13 @@ export type Database = {
       orders: {
         Row: {
           amount_paid: number | null
+          asaas_customer_id: string | null
+          asaas_payment_id: string | null
           child_age: string | null
           child_name: string
           clothing_size: string | null
           created_at: string
+          customer_document: string | null
           customer_email: string | null
           customer_name: string
           customer_phone: string
@@ -124,6 +127,8 @@ export type Database = {
           party_location: string | null
           party_map_url: string | null
           party_time: string | null
+          payment_method: string | null
+          payment_url: string | null
           photo_url: string | null
           price: number
           product_id: string | null
@@ -136,10 +141,13 @@ export type Database = {
         }
         Insert: {
           amount_paid?: number | null
+          asaas_customer_id?: string | null
+          asaas_payment_id?: string | null
           child_age?: string | null
           child_name: string
           clothing_size?: string | null
           created_at?: string
+          customer_document?: string | null
           customer_email?: string | null
           customer_name: string
           customer_phone: string
@@ -159,6 +167,8 @@ export type Database = {
           party_location?: string | null
           party_map_url?: string | null
           party_time?: string | null
+          payment_method?: string | null
+          payment_url?: string | null
           photo_url?: string | null
           price?: number
           product_id?: string | null
@@ -171,10 +181,13 @@ export type Database = {
         }
         Update: {
           amount_paid?: number | null
+          asaas_customer_id?: string | null
+          asaas_payment_id?: string | null
           child_age?: string | null
           child_name?: string
           clothing_size?: string | null
           created_at?: string
+          customer_document?: string | null
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string
@@ -194,6 +207,8 @@ export type Database = {
           party_location?: string | null
           party_map_url?: string | null
           party_time?: string | null
+          payment_method?: string | null
+          payment_url?: string | null
           photo_url?: string | null
           price?: number
           product_id?: string | null
