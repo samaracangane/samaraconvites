@@ -6,7 +6,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
 import { getPublicOrder, startOrderCheckout } from "@/lib/orders.functions";
-import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { CheckCircle2, Clock, Download, Sparkles, XCircle } from "lucide-react";
 
 export const Route = createFileRoute("/meu-pedido/$id")({
@@ -50,14 +49,13 @@ function MeuPedido() {
   });
 
   const startCheckoutFn = useServerFn(startOrderCheckout);
-  const { openCheckout } = usePaddleCheckout();
   const [paying, setPaying] = useState(false);
 
   async function handlePayAgain() {
     setPaying(true);
     try {
-      const { transactionId } = await startCheckoutFn({ data: { orderId: id } });
-      await openCheckout({ transactionId, successUrl: window.location.href });
+      const { paymentUrl } = await startCheckoutFn({ data: { orderId: id } });
+      window.location.href = paymentUrl;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Não foi possível abrir o pagamento");
     } finally {
