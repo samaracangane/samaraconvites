@@ -1,4 +1,4 @@
-// Dados oficiais do vendedor — exigidos pela análise de domínio da Paddle.
+// Dados oficiais do vendedor.
 export const BUSINESS = {
   brand: "Samara Encanto Convites",
   legalName: "Samara Roberta Cangane",

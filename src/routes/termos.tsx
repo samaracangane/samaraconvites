@@ -139,26 +139,17 @@ function TermosPage() {
             </h2>
             <p className="mt-2">
               Os preços são exibidos no site e o pagamento é processado no checkout. As condições
-              de pagamento, cobrança, impostos, cancelamento e reembolso seguem os{" "}
-              <a
-                href="https://www.paddle.com/legal/checkout-buyer-terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
-              >
-                Termos do Comprador da Paddle
-              </a>
-              . Consulte também nossa{" "}
+              de pagamento, cobrança, impostos, cancelamento e reembolso seguem estes Termos e a
+              legislação brasileira aplicável. Consulte também nossa{" "}
               <Link to="/reembolso" className="text-primary underline">
                 Política de Reembolso
               </Link>
               .
             </p>
             <p className="mt-2">
-              Nosso processo de pedidos é conduzido pelo nosso revendedor online Paddle.com. A
-              Paddle.com é o Comerciante Registrado (Merchant of Record) de todos os nossos
-              pedidos. A Paddle atende a todas as solicitações de suporte ao cliente e cuida das
-              devoluções.
+              Os pagamentos são processados pelo Asaas (Asaas Gestão Financeira S.A.), instituição
+              de pagamento parceira, com Pix e cartão de crédito. A venda, o suporte e os
+              reembolsos são realizados diretamente por nós.
             </p>
           </section>
 

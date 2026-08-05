@@ -32,7 +32,6 @@ export type Product = {
   isNew?: boolean;
   onSale?: boolean;
   coverIndex?: number;
-  paddlePriceId?: string | null;
 };
 
 export const categories: Category[] = [

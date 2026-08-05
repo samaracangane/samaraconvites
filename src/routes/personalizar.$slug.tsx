@@ -5,13 +5,10 @@ import { formatBRL } from "@/lib/mock-data";
 import { useStoreProduct } from "@/lib/store-queries";
 import { useServerFn } from "@tanstack/react-start";
 import { createOrder, startOrderCheckout } from "@/lib/orders.functions";
-import { getPaddleEnvironment } from "@/lib/paddle";
 import { uploadMedia } from "@/lib/admin-media";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
-import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 
 export const Route = createFileRoute("/personalizar/$slug")({
   head: ({ params }) => ({
@@ -49,7 +46,6 @@ function PersonalizarPage() {
   const [saving, setSaving] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [musicFile, setMusicFile] = useState<File | null>(null);
-  const { openCheckout } = usePaddleCheckout();
   const createOrderFn = useServerFn(createOrder);
   const startCheckoutFn = useServerFn(startOrderCheckout);
 
@@ -117,10 +113,10 @@ function PersonalizarPage() {
       const { orderId } = await createOrderFn({
         data: {
           productId: product.id,
-          environment: getPaddleEnvironment(),
           customer_name: get("customer_name") ?? "",
           customer_email: get("customer_email") ?? "",
           customer_phone: get("customer_phone") ?? "",
+          customer_document: get("customer_document") ?? "",
           child_name: get("child_name") ?? "",
           child_age: get("child_age"),
           party_date: get("party_date"),
@@ -139,11 +135,8 @@ function PersonalizarPage() {
       });
 
       try {
-        const { transactionId } = await startCheckoutFn({ data: { orderId } });
-        await openCheckout({
-          transactionId,
-          successUrl: `${window.location.origin}/meu-pedido/${orderId}`,
-        });
+        const { paymentUrl } = await startCheckoutFn({ data: { orderId } });
+        window.location.href = paymentUrl;
       } catch (checkoutError) {
         console.error(checkoutError);
         toast.error("Pedido salvo, mas não conseguimos abrir o pagamento. Abra o link do seu pedido para tentar de novo.");
@@ -159,7 +152,6 @@ function PersonalizarPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <PaymentTestModeBanner />
       <Header />
       <div className="mx-auto max-w-6xl px-4 py-10">
         <Link
@@ -185,6 +177,7 @@ function PersonalizarPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Seu nome" required><input required name="customer_name" className={inputCls} placeholder="Ex: Maria" /></Field>
                 <Field label="Celular com DDD" required><input required name="customer_phone" type="tel" className={inputCls} placeholder="(11) 99999-9999" /></Field>
+                <Field label="CPF" required hint="Necessário para emitir a cobrança (Pix ou cartão)."><input required name="customer_document" inputMode="numeric" className={inputCls} placeholder="000.000.000-00" /></Field>
                 <Field label="E-mail" required hint="Enviamos aqui a confirmação do pagamento e o convite pronto."><input required name="customer_email" type="email" className={inputCls} placeholder="voce@email.com" /></Field>
               </div>
             </section>
@@ -244,9 +237,7 @@ function PersonalizarPage() {
               <Sparkles className="h-4 w-4" />{" "}
               {saving
                 ? "Processando..."
-                : product.paddlePriceId
-                  ? `Pagar ${formatBRL(product.price)}`
-                  : "Enviar pedido"}
+                : `Pagar ${formatBRL(product.price)}`}
             </button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
               Pagamento seguro via Pix ou cartão. Você receberá a confirmação por e-mail assim que o

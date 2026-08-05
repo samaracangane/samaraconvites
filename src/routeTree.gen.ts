@@ -34,7 +34,7 @@ import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin.categorias'
 import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicPaymentsAsaasRouteImport } from './routes/api/public/payments/asaas'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -167,12 +167,11 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const ApiPublicPaymentsAsaasRoute = ApiPublicPaymentsAsaasRouteImport.update({
+  id: '/api/public/payments/asaas',
+  path: '/api/public/payments/asaas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -198,7 +197,7 @@ export interface FileRoutesByFullPath {
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -224,7 +223,7 @@ export interface FileRoutesByTo {
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -253,7 +252,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/_authenticated/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -282,7 +281,7 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/vitrines'
     | '/admin/'
-    | '/api/public/payments/webhook'
+    | '/api/public/payments/asaas'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -308,7 +307,7 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/vitrines'
     | '/admin'
-    | '/api/public/payments/webhook'
+    | '/api/public/payments/asaas'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -336,7 +335,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/produtos'
     | '/_authenticated/admin/vitrines'
     | '/_authenticated/admin/'
-    | '/api/public/payments/webhook'
+    | '/api/public/payments/asaas'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -357,7 +356,7 @@ export interface RootRouteChildren {
   PaginaSlugRoute: typeof PaginaSlugRoute
   PersonalizarSlugRoute: typeof PersonalizarSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
-  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  ApiPublicPaymentsAsaasRoute: typeof ApiPublicPaymentsAsaasRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -538,11 +537,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+    '/api/public/payments/asaas': {
+      id: '/api/public/payments/asaas'
+      path: '/api/public/payments/asaas'
+      fullPath: '/api/public/payments/asaas'
+      preLoaderRoute: typeof ApiPublicPaymentsAsaasRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -599,19 +598,9 @@ const rootRouteChildren: RootRouteChildren = {
   PaginaSlugRoute: PaginaSlugRoute,
   PersonalizarSlugRoute: PersonalizarSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
-  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  ApiPublicPaymentsAsaasRoute: ApiPublicPaymentsAsaasRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

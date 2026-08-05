@@ -50,17 +50,8 @@ function ReembolsoPage() {
           <section>
             <h2 className="font-display text-2xl text-foreground">Como solicitar</h2>
             <p className="mt-2">
-              Os pagamentos e reembolsos são processados pela Paddle, nossa Comerciante Registrada
-              (Merchant of Record). Para pedir o reembolso, acesse{" "}
-              <a
-                href="https://paddle.net"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
-              >
-                paddle.net
-              </a>{" "}
-              com o e-mail usado na compra, ou fale com a gente pela{" "}
+              Os pagamentos são processados pelo Asaas e os reembolsos são solicitados diretamente
+              conosco. Para pedir o reembolso, fale com a gente pela{" "}
               <Link to="/contato" className="text-primary underline">
                 página de contato
               </Link>{" "}
@@ -90,16 +81,7 @@ function ReembolsoPage() {
           <section>
             <h2 className="font-display text-2xl text-foreground">Mais informações</h2>
             <p className="mt-2">
-              Esta política complementa a{" "}
-              <a
-                href="https://www.paddle.com/legal/refund-policy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline"
-              >
-                Política de Reembolso da Paddle
-              </a>{" "}
-              e os{" "}
+              Esta política complementa o Código de Defesa do Consumidor e os{" "}
               <Link to="/termos" className="text-primary underline">
                 nossos Termos e Condições
               </Link>

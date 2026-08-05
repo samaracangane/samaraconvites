@@ -89,8 +89,9 @@ function Contato() {
             </li>
           </ul>
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            Nosso processo de pedidos é conduzido pela nossa revendedora online Paddle.com. A Paddle.com é a
-            Merchant of Record de todos os nossos pedidos e cuida das solicitações de atendimento e reembolso.
+            Os pagamentos são processados com segurança pelo Asaas (Pix e cartão de crédito). O
+            atendimento, os ajustes e os pedidos de reembolso são feitos diretamente conosco pelos
+            canais acima.
           </p>
         </div>
       </div>

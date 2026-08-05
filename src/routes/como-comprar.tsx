@@ -35,7 +35,7 @@ const steps = [
   },
   {
     t: "3. Pague com segurança",
-    d: "O pagamento é processado pela Paddle.com, nossa revendedora e Merchant of Record. Aceitamos cartão de crédito e Pix. Você recebe o recibo por e-mail automaticamente.",
+    d: "O pagamento é processado com segurança pelo Asaas. Aceitamos Pix (aprovação imediata) e cartão de crédito. Você recebe a confirmação por e-mail automaticamente.",
   },
   {
     t: "4. Receba seu convite",

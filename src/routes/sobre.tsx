@@ -38,8 +38,8 @@ function Sobre() {
             segunda a sexta, das 9h às 18h.
           </p>
           <p className="mt-1">
-            <strong className="text-foreground">Pagamentos:</strong> processados pela Paddle.com, nossa revendedora
-            online e Merchant of Record de todos os pedidos.
+            <strong className="text-foreground">Pagamentos:</strong> processados com segurança pelo Asaas,
+            com Pix e cartão de crédito. A venda é realizada diretamente por nós.
           </p>
         </div>
 

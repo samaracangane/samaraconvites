@@ -23,14 +23,12 @@ export type PublicOrder = {
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const envSchema = z.enum(["sandbox", "live"]);
-
 const createOrderSchema = z.object({
   productId: z.string().uuid(),
-  environment: envSchema,
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
   customer_phone: z.string().trim().min(8).max(30),
+  customer_document: z.string().trim().min(11).max(20),
   child_name: z.string().trim().min(1).max(120),
   child_age: z.string().trim().max(40).nullish(),
   party_date: z.string().trim().max(20).nullish(),
@@ -82,6 +80,11 @@ export const createOrder = createServerFn({ method: "POST" })
       throw new Error("Convite indisponível no momento");
     }
 
+    const { getAsaasEnv, isValidCpfCnpj, onlyDigits } = await import("@/lib/asaas.server");
+    if (!isValidCpfCnpj(data.customer_document)) {
+      throw new Error("CPF/CNPJ inválido");
+    }
+
     const user = await getOptionalUser();
 
     const { data: inserted, error } = await supabaseAdmin
@@ -92,11 +95,12 @@ export const createOrder = createServerFn({ method: "POST" })
         product_slug: (product as any).slug,
         price: (product as any).price,
         status: "pending",
-        environment: data.environment,
+        environment: getAsaasEnv(),
         user_id: user?.id ?? null,
         customer_name: data.customer_name,
         customer_email: data.customer_email.toLowerCase(),
         customer_phone: data.customer_phone,
+        customer_document: onlyDigits(data.customer_document),
         child_name: data.child_name,
         child_age: data.child_age ?? null,
         party_date: data.party_date || null,
@@ -120,22 +124,23 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 /**
- * Abre (ou reabre) a cobrança de um pedido pendente. Cria uma transação na
- * Paddle com o valor exato do pedido — serve tanto para o primeiro pagamento
- * quanto para tentar novamente após um Pix expirado.
+ * Abre (ou reabre) a cobrança de um pedido pendente no Asaas com o valor exato
+ * do pedido. Serve para o primeiro pagamento e para tentar de novo depois.
  */
 export const startOrderCheckout = createServerFn({ method: "POST" })
   .inputValidator((data: { orderId: string }) => {
     if (!UUID_RE.test(data?.orderId ?? "")) throw new Error("Pedido inválido");
     return data;
   })
-  .handler(async ({ data }): Promise<{ transactionId: string }> => {
+  .handler(async ({ data }): Promise<{ paymentUrl: string }> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { createCheckoutTransaction } = await import("@/lib/orders.server");
+    const { createCheckoutCharge } = await import("@/lib/orders.server");
 
     const { data: order, error } = await supabaseAdmin
       .from("orders")
-      .select("id, product_title, price, status, customer_email, customer_name, environment")
+      .select(
+        "id, product_title, price, status, customer_email, customer_name, customer_phone, customer_document, environment, payment_url, asaas_payment_id",
+      )
       .eq("id", data.orderId)
       .maybeSingle();
 
@@ -145,26 +150,35 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
     const o = order as any;
     if (o.status !== "pending") throw new Error("Este pedido não está aguardando pagamento");
     if (!o.customer_email) throw new Error("Pedido sem e-mail cadastrado");
+    if (!o.customer_document) throw new Error("Pedido sem CPF cadastrado");
 
-    const { transactionId, paddleCustomerId } = await createCheckoutTransaction({
-      env: (o.environment ?? "sandbox") as "sandbox" | "live",
+    // Reaproveita a cobrança já criada, se existir.
+    if (o.payment_url && o.asaas_payment_id) {
+      return { paymentUrl: o.payment_url as string };
+    }
+
+    const { paymentId, paymentUrl, customerId, env } = await createCheckoutCharge({
       orderId: o.id,
       productTitle: o.product_title,
       price: Number(o.price),
       customerEmail: o.customer_email,
       customerName: o.customer_name,
+      customerDocument: o.customer_document,
+      customerPhone: o.customer_phone,
     });
 
     await supabaseAdmin
       .from("orders")
       .update({
-        paddle_transaction_id: transactionId,
-        paddle_customer_id: paddleCustomerId,
+        asaas_payment_id: paymentId,
+        asaas_customer_id: customerId,
+        payment_url: paymentUrl,
+        environment: env,
         updated_at: new Date().toISOString(),
       })
       .eq("id", o.id);
 
-    return { transactionId };
+    return { paymentUrl };
   });
 
 /**

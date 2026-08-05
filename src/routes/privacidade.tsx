@@ -75,8 +75,8 @@ function PrivacidadePage() {
               </li>
             </ul>
             <p className="mt-2">
-              Não armazenamos dados de cartão. O pagamento é processado pela Paddle, nosso
-              Comerciante Registrado.
+              Não armazenamos dados de cartão. O pagamento é processado pelo Asaas, nossa
+              instituição de pagamento parceira.
             </p>
           </section>
 
@@ -115,8 +115,9 @@ function PrivacidadePage() {
                 suporte.
               </li>
               <li className="ml-5 list-disc">
-                <strong className="text-foreground">Paddle.com (Merchant of Record):</strong> para
-                venda, pagamentos, gestão de assinaturas, faturamento e conformidade fiscal.
+                <strong className="text-foreground">Asaas (instituição de pagamento):</strong> para
+                processar cobranças por Pix e cartão de crédito, prevenção a fraudes e emissão de
+                recibos.
               </li>
               <li className="ml-5 list-disc">
                 <strong className="text-foreground">Consultores profissionais:</strong> jurídicos e
