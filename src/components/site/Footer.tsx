@@ -76,8 +76,8 @@ export function Footer() {
           {BUSINESS.taxId} · {BUSINESS_ADDRESS}
         </p>
         <p>
-          Nosso processo de pedidos é conduzido pela nossa revendedora online Paddle.com, Merchant of Record
-          de todos os nossos pedidos.
+          Pagamentos processados com segurança pelo Asaas (Pix e cartão de crédito). A venda é
+          realizada diretamente por {BUSINESS.legalName}.
         </p>
       </div>
     </footer>
