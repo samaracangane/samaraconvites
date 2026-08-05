@@ -120,22 +120,23 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 /**
- * Abre (ou reabre) a cobrança de um pedido pendente. Cria uma transação na
- * Paddle com o valor exato do pedido — serve tanto para o primeiro pagamento
- * quanto para tentar novamente após um Pix expirado.
+ * Abre (ou reabre) a cobrança de um pedido pendente no Asaas com o valor exato
+ * do pedido. Serve para o primeiro pagamento e para tentar de novo depois.
  */
 export const startOrderCheckout = createServerFn({ method: "POST" })
   .inputValidator((data: { orderId: string }) => {
     if (!UUID_RE.test(data?.orderId ?? "")) throw new Error("Pedido inválido");
     return data;
   })
-  .handler(async ({ data }): Promise<{ transactionId: string }> => {
+  .handler(async ({ data }): Promise<{ paymentUrl: string }> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { createCheckoutTransaction } = await import("@/lib/orders.server");
+    const { createCheckoutCharge } = await import("@/lib/orders.server");
 
     const { data: order, error } = await supabaseAdmin
       .from("orders")
-      .select("id, product_title, price, status, customer_email, customer_name, environment")
+      .select(
+        "id, product_title, price, status, customer_email, customer_name, customer_phone, customer_document, environment, payment_url, asaas_payment_id",
+      )
       .eq("id", data.orderId)
       .maybeSingle();
 
@@ -145,26 +146,35 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
     const o = order as any;
     if (o.status !== "pending") throw new Error("Este pedido não está aguardando pagamento");
     if (!o.customer_email) throw new Error("Pedido sem e-mail cadastrado");
+    if (!o.customer_document) throw new Error("Pedido sem CPF cadastrado");
 
-    const { transactionId, paddleCustomerId } = await createCheckoutTransaction({
-      env: (o.environment ?? "sandbox") as "sandbox" | "live",
+    // Reaproveita a cobrança já criada, se existir.
+    if (o.payment_url && o.asaas_payment_id) {
+      return { paymentUrl: o.payment_url as string };
+    }
+
+    const { paymentId, paymentUrl, customerId, env } = await createCheckoutCharge({
       orderId: o.id,
       productTitle: o.product_title,
       price: Number(o.price),
       customerEmail: o.customer_email,
       customerName: o.customer_name,
+      customerDocument: o.customer_document,
+      customerPhone: o.customer_phone,
     });
 
     await supabaseAdmin
       .from("orders")
       .update({
-        paddle_transaction_id: transactionId,
-        paddle_customer_id: paddleCustomerId,
+        asaas_payment_id: paymentId,
+        asaas_customer_id: customerId,
+        payment_url: paymentUrl,
+        environment: env,
         updated_at: new Date().toISOString(),
       })
       .eq("id", o.id);
 
-    return { transactionId };
+    return { paymentUrl };
   });
 
 /**

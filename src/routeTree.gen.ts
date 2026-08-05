@@ -35,6 +35,7 @@ import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as ApiPublicPaymentsAsaasRouteImport } from './routes/api/public/payments/asaas'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -173,6 +174,11 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPaymentsAsaasRoute = ApiPublicPaymentsAsaasRouteImport.update({
+  id: '/api/public/payments/asaas',
+  path: '/api/public/payments/asaas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -253,6 +261,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/produtos': typeof AuthenticatedAdminProdutosRoute
   '/_authenticated/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/vitrines'
     | '/admin/'
+    | '/api/public/payments/asaas'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/admin/produtos'
     | '/admin/vitrines'
     | '/admin'
+    | '/api/public/payments/asaas'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   id:
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/produtos'
     | '/_authenticated/admin/vitrines'
     | '/_authenticated/admin/'
+    | '/api/public/payments/asaas'
     | '/api/public/payments/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
@@ -357,6 +369,7 @@ export interface RootRouteChildren {
   PaginaSlugRoute: typeof PaginaSlugRoute
   PersonalizarSlugRoute: typeof PersonalizarSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
+  ApiPublicPaymentsAsaasRoute: typeof ApiPublicPaymentsAsaasRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
@@ -545,6 +558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/asaas': {
+      id: '/api/public/payments/asaas'
+      path: '/api/public/payments/asaas'
+      fullPath: '/api/public/payments/asaas'
+      preLoaderRoute: typeof ApiPublicPaymentsAsaasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -599,6 +619,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaginaSlugRoute: PaginaSlugRoute,
   PersonalizarSlugRoute: PersonalizarSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
+  ApiPublicPaymentsAsaasRoute: ApiPublicPaymentsAsaasRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
