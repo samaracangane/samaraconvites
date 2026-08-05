@@ -23,14 +23,12 @@ export type PublicOrder = {
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const envSchema = z.enum(["sandbox", "live"]);
-
 const createOrderSchema = z.object({
   productId: z.string().uuid(),
-  environment: envSchema,
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
   customer_phone: z.string().trim().min(8).max(30),
+  customer_document: z.string().trim().min(11).max(20),
   child_name: z.string().trim().min(1).max(120),
   child_age: z.string().trim().max(40).nullish(),
   party_date: z.string().trim().max(20).nullish(),
@@ -82,6 +80,11 @@ export const createOrder = createServerFn({ method: "POST" })
       throw new Error("Convite indisponível no momento");
     }
 
+    const { getAsaasEnv, isValidCpfCnpj, onlyDigits } = await import("@/lib/asaas.server");
+    if (!isValidCpfCnpj(data.customer_document)) {
+      throw new Error("CPF/CNPJ inválido");
+    }
+
     const user = await getOptionalUser();
 
     const { data: inserted, error } = await supabaseAdmin
@@ -92,11 +95,12 @@ export const createOrder = createServerFn({ method: "POST" })
         product_slug: (product as any).slug,
         price: (product as any).price,
         status: "pending",
-        environment: data.environment,
+        environment: getAsaasEnv(),
         user_id: user?.id ?? null,
         customer_name: data.customer_name,
         customer_email: data.customer_email.toLowerCase(),
         customer_phone: data.customer_phone,
+        customer_document: onlyDigits(data.customer_document),
         child_name: data.child_name,
         child_age: data.child_age ?? null,
         party_date: data.party_date || null,
