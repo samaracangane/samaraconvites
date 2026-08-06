@@ -10,7 +10,7 @@ export const Route = createFileRoute("/como-comprar")({
       {
         name: "description",
         content:
-          "Passo a passo para comprar um convite digital personalizado: escolha o modelo, preencha os dados da festa, pague com cartão ou Pix e receba o arquivo em até 24h.",
+          "Passo a passo para comprar um convite digital personalizado: escolha o modelo, preencha os dados da festa, pague por PIX e receba o arquivo em até 24h.",
       },
       { property: "og:title", content: "Como comprar — Samara Encanto Convites" },
       {
@@ -35,7 +35,7 @@ const steps = [
   },
   {
     t: "3. Pague com segurança",
-    d: "O pagamento é processado com segurança pelo Asaas. Aceitamos Pix (aprovação imediata) e cartão de crédito. Você recebe a confirmação por e-mail automaticamente.",
+    d: "O pagamento é feito exclusivamente por PIX (PicPay): mostramos o QR Code e o código copia e cola na hora. Você recebe a confirmação por e-mail automaticamente.",
   },
   {
     t: "4. Receba seu convite",

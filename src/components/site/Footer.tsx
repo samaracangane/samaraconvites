@@ -76,7 +76,7 @@ export function Footer() {
           {BUSINESS.taxId} · {BUSINESS_ADDRESS}
         </p>
         <p>
-          Pagamentos processados com segurança pelo Asaas (Pix e cartão de crédito). A venda é
+          Pagamento exclusivamente via PIX (PicPay). A venda é
           realizada diretamente por {BUSINESS.legalName}.
         </p>
       </div>

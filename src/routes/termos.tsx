@@ -147,8 +147,7 @@ function TermosPage() {
               .
             </p>
             <p className="mt-2">
-              Os pagamentos são processados pelo Asaas (Asaas Gestão Financeira S.A.), instituição
-              de pagamento parceira, com Pix e cartão de crédito. A venda, o suporte e os
+              O único meio de pagamento aceito é PIX, recebido na conta PicPay da loja. A venda, o suporte e os
               reembolsos são realizados diretamente por nós.
             </p>
           </section>

@@ -38,8 +38,8 @@ function Sobre() {
             segunda a sexta, das 9h às 18h.
           </p>
           <p className="mt-1">
-            <strong className="text-foreground">Pagamentos:</strong> processados com segurança pelo Asaas,
-            com Pix e cartão de crédito. A venda é realizada diretamente por nós.
+            <strong className="text-foreground">Pagamentos:</strong> aceitamos exclusivamente PIX, recebido na
+            conta PicPay da loja. A venda é realizada diretamente por nós.
           </p>
         </div>
 

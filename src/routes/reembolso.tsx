@@ -50,7 +50,7 @@ function ReembolsoPage() {
           <section>
             <h2 className="font-display text-2xl text-foreground">Como solicitar</h2>
             <p className="mt-2">
-              Os pagamentos são processados pelo Asaas e os reembolsos são solicitados diretamente
+              Os pagamentos são recebidos por PIX (PicPay) e os reembolsos são solicitados diretamente
               conosco. Para pedir o reembolso, fale com a gente pela{" "}
               <Link to="/contato" className="text-primary underline">
                 página de contato
@@ -63,7 +63,7 @@ function ReembolsoPage() {
             <h2 className="font-display text-2xl text-foreground">Prazos e devolução do valor</h2>
             <p className="mt-2">
               Após a aprovação, o valor é devolvido pelo mesmo meio de pagamento utilizado. O prazo
-              de compensação depende do banco ou emissor do cartão e costuma levar de 5 a 10 dias
+              do PIX de devolução depende do seu banco e costuma levar de 1 a 5 dias
               úteis. Reembolsos de compras via Pix são creditados na chave/conta de origem.
             </p>
           </section>
