@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PixPayment } from "@/components/site/PixPayment";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { getPublicOrder, startOrderCheckout } from "@/lib/orders.functions";
 import { CheckCircle2, Clock, Download, Sparkles, XCircle } from "lucide-react";
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/meu-pedido/$id")({
 });
 
 const STEPS = [
-  { key: "pending", label: "Pedido recebido", icon: Clock },
+  { key: "pending", label: "Aguardando pagamento via PIX", icon: Clock },
   { key: "paid", label: "Pagamento confirmado", icon: CheckCircle2 },
   { key: "delivered", label: "Convite entregue", icon: Sparkles },
 ] as const;
@@ -42,26 +43,32 @@ function formatBRL(v: number) {
 
 function MeuPedido() {
   const { id } = Route.useParams();
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["public-order", id],
     queryFn: () => getPublicOrder({ data: { orderId: id } }),
     refetchInterval: 30000,
   });
 
   const startCheckoutFn = useServerFn(startOrderCheckout);
-  const [paying, setPaying] = useState(false);
+  const [pix, setPix] = useState<string | null>(null);
+  const requested = useRef(false);
 
-  async function handlePayAgain() {
-    setPaying(true);
-    try {
-      const { paymentUrl } = await startCheckoutFn({ data: { orderId: id } });
-      window.location.href = paymentUrl;
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível abrir o pagamento");
-    } finally {
-      setPaying(false);
-    }
-  }
+  const total = data ? Number(data.price) * Number(data.quantity ?? 1) : 0;
+  const pixPayload = data?.pix_payload ?? pix;
+
+  // Gera o PIX automaticamente se o pedido ainda estiver aguardando pagamento.
+  useEffect(() => {
+    if (!data || data.status !== "pending" || data.pix_payload || requested.current) return;
+    requested.current = true;
+    startCheckoutFn({ data: { orderId: id } })
+      .then((r) => {
+        setPix(r.pixPayload);
+        refetch();
+      })
+      .catch((err) =>
+        toast.error(err instanceof Error ? err.message : "Não foi possível gerar o PIX"),
+      );
+  }, [data, id, startCheckoutFn, refetch]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -79,61 +86,87 @@ function MeuPedido() {
 
         {data && (
           <div className="mt-6 space-y-6">
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-soft">
-              <div className="text-xs font-bold uppercase tracking-wider text-primary">
-                {data.product_title}
-              </div>
-              <div className="mt-1 font-display text-2xl">{data.child_name}</div>
-              <div className="mt-1 text-sm text-muted-foreground">
-                {formatBRL(Number(data.price))} · pedido em{" "}
-                {new Date(data.created_at).toLocaleDateString("pt-BR")}
-              </div>
-
-              {data.status === "canceled" ? (
-                <div className="mt-5 flex items-center gap-2 rounded-2xl bg-muted p-4 text-sm">
-                  <XCircle className="h-4 w-4 text-destructive" /> Pedido cancelado ou reembolsado.
-                </div>
-              ) : (
-                <ol className="mt-6 space-y-4">
-                  {STEPS.map((step) => {
-                    const order = ["pending", "paid", "delivered"];
-                    const done = order.indexOf(data.status) >= order.indexOf(step.key);
-                    const Icon = step.icon;
-                    return (
-                      <li key={step.key} className="flex items-center gap-3">
-                        <span
-                          className={`flex h-9 w-9 items-center justify-center rounded-full ${
-                            done ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <span className={done ? "font-semibold" : "text-muted-foreground"}>
-                          {step.label}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ol>
+            {/* Resumo do pedido com a imagem em destaque */}
+            <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
+              {data.product_image_url && (
+                <img
+                  src={data.product_image_url}
+                  alt={data.product_title}
+                  className="max-h-[420px] w-full bg-muted object-contain"
+                />
               )}
+              <div className="p-6">
+                <div className="text-xs font-bold uppercase tracking-wider text-primary">
+                  Pedido nº {data.id.slice(0, 8).toUpperCase()}
+                </div>
+                <h2 className="mt-1 font-display text-2xl">{data.product_title}</h2>
+                <div className="mt-1 text-sm text-muted-foreground">
+                  Para {data.child_name} · pedido em{" "}
+                  {new Date(data.created_at).toLocaleDateString("pt-BR")}
+                </div>
+
+                <dl className="mt-4 space-y-1.5 border-t border-border/60 pt-4 text-sm">
+                  <div className="flex items-center justify-between">
+                    <dt className="text-muted-foreground">Preço</dt>
+                    <dd className="font-semibold">{formatBRL(Number(data.price))}</dd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <dt className="text-muted-foreground">Quantidade</dt>
+                    <dd className="font-semibold">{data.quantity ?? 1}</dd>
+                  </div>
+                  <div className="flex items-baseline justify-between border-t border-border/60 pt-2">
+                    <dt className="font-semibold">
+                      {data.status === "pending" ? "Valor a pagar" : "Valor pago"}
+                    </dt>
+                    <dd className="text-xl font-bold text-primary">{formatBRL(total)}</dd>
+                  </div>
+                </dl>
+
+                <div className="mt-4 rounded-2xl bg-muted/60 px-4 py-3 text-center text-sm font-semibold">
+                  {data.status === "pending" && "Aguardando confirmação do pagamento via PIX"}
+                  {data.status === "paid" && "Pagamento confirmado — convite em produção"}
+                  {data.status === "delivered" && "Convite entregue 💗"}
+                  {data.status === "canceled" && "Pedido cancelado ou reembolsado"}
+                </div>
+              </div>
             </div>
 
-            {data.status === "pending" && (
-              <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Ainda não recebemos o pagamento deste pedido. Se o Pix expirou ou a tela fechou,
-                  você pode retomar agora.
-                </p>
-                <button
-                  type="button"
-                  onClick={handlePayAgain}
-                  disabled={paying}
-                  className="mt-4 inline-flex items-center justify-center rounded-full bg-primary-gradient px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow disabled:opacity-60"
-                >
-                  {paying ? "Abrindo pagamento…" : "Pagar agora"}
-                </button>
+            {data.status === "canceled" ? (
+              <div className="flex items-center gap-2 rounded-2xl bg-muted p-4 text-sm">
+                <XCircle className="h-4 w-4 text-destructive" /> Pedido cancelado ou reembolsado.
               </div>
+            ) : (
+              <ol className="space-y-4 rounded-3xl border border-border bg-card p-6">
+                {STEPS.map((step) => {
+                  const order = ["pending", "paid", "delivered"];
+                  const done = order.indexOf(data.status) >= order.indexOf(step.key);
+                  const Icon = step.icon;
+                  return (
+                    <li key={step.key} className="flex items-center gap-3">
+                      <span
+                        className={`flex h-9 w-9 items-center justify-center rounded-full ${
+                          done ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className={done ? "font-semibold" : "text-muted-foreground"}>
+                        {step.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
             )}
+
+            {data.status === "pending" &&
+              (pixPayload ? (
+                <PixPayment payload={pixPayload} amount={total} />
+              ) : (
+                <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 text-center text-sm text-muted-foreground">
+                  Gerando seu PIX…
+                </div>
+              ))}
 
             {data.delivered_media_url && (
               <a
