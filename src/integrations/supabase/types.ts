@@ -130,10 +130,13 @@ export type Database = {
           payment_method: string | null
           payment_url: string | null
           photo_url: string | null
+          pix_payload: string | null
           price: number
           product_id: string | null
+          product_image_url: string | null
           product_slug: string
           product_title: string
+          quantity: number
           shoe_size: string | null
           status: Database["public"]["Enums"]["order_status"]
           updated_at: string
@@ -170,10 +173,13 @@ export type Database = {
           payment_method?: string | null
           payment_url?: string | null
           photo_url?: string | null
+          pix_payload?: string | null
           price?: number
           product_id?: string | null
+          product_image_url?: string | null
           product_slug: string
           product_title: string
+          quantity?: number
           shoe_size?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string
@@ -210,10 +216,13 @@ export type Database = {
           payment_method?: string | null
           payment_url?: string | null
           photo_url?: string | null
+          pix_payload?: string | null
           price?: number
           product_id?: string | null
+          product_image_url?: string | null
           product_slug?: string
           product_title?: string
+          quantity?: number
           shoe_size?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string

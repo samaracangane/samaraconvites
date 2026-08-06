@@ -75,7 +75,7 @@ function PrivacidadePage() {
               </li>
             </ul>
             <p className="mt-2">
-              Não armazenamos dados de cartão. O pagamento é processado pelo Asaas, nossa
+              Não armazenamos dados bancários. O pagamento é feito por PIX (PicPay), nossa
               instituição de pagamento parceira.
             </p>
           </section>
@@ -115,8 +115,8 @@ function PrivacidadePage() {
                 suporte.
               </li>
               <li className="ml-5 list-disc">
-                <strong className="text-foreground">Asaas (instituição de pagamento):</strong> para
-                processar cobranças por Pix e cartão de crédito, prevenção a fraudes e emissão de
+                <strong className="text-foreground">PicPay (instituição de pagamento):</strong> para
+                receber e confirmar cobranças por PIX, prevenção a fraudes e emissão de
                 recibos.
               </li>
               <li className="ml-5 list-disc">

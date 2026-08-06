@@ -116,7 +116,6 @@ function PersonalizarPage() {
           customer_name: get("customer_name") ?? "",
           customer_email: get("customer_email") ?? "",
           customer_phone: get("customer_phone") ?? "",
-          customer_document: get("customer_document") ?? "",
           child_name: get("child_name") ?? "",
           child_age: get("child_age"),
           party_date: get("party_date"),
@@ -135,13 +134,12 @@ function PersonalizarPage() {
       });
 
       try {
-        const { paymentUrl } = await startCheckoutFn({ data: { orderId } });
-        window.location.href = paymentUrl;
+        await startCheckoutFn({ data: { orderId } });
       } catch (checkoutError) {
         console.error(checkoutError);
-        toast.error("Pedido salvo, mas não conseguimos abrir o pagamento. Abra o link do seu pedido para tentar de novo.");
-        window.location.href = `/meu-pedido/${orderId}`;
+        toast.error("Pedido salvo! Abra a página do pedido para ver o PIX.");
       }
+      window.location.href = `/meu-pedido/${orderId}`;
 
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao enviar pedido");
@@ -177,7 +175,6 @@ function PersonalizarPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Field label="Seu nome" required><input required name="customer_name" className={inputCls} placeholder="Ex: Maria" /></Field>
                 <Field label="Celular com DDD" required><input required name="customer_phone" type="tel" className={inputCls} placeholder="(11) 99999-9999" /></Field>
-                <Field label="CPF" required hint="Necessário para emitir a cobrança (Pix ou cartão)."><input required name="customer_document" inputMode="numeric" className={inputCls} placeholder="000.000.000-00" /></Field>
                 <Field label="E-mail" required hint="Enviamos aqui a confirmação do pagamento e o convite pronto."><input required name="customer_email" type="email" className={inputCls} placeholder="voce@email.com" /></Field>
               </div>
             </section>
@@ -237,25 +234,42 @@ function PersonalizarPage() {
               <Sparkles className="h-4 w-4" />{" "}
               {saving
                 ? "Processando..."
-                : `Pagar ${formatBRL(product.price)}`}
+                : `Pagar ${formatBRL(product.price)} com PIX`}
             </button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              Pagamento seguro via Pix ou cartão. Você receberá a confirmação por e-mail assim que o
-              pagamento for aprovado.
+              Pagamento exclusivamente via PIX (PicPay). Na próxima tela você recebe o QR Code e o
+              código copia e cola. A confirmação chega por e-mail.
             </p>
           </form>
 
           {/* Resumo */}
           <aside className="h-fit rounded-3xl border border-border/60 bg-card p-5 shadow-card lg:sticky lg:top-24">
             <div className="text-xs font-bold uppercase tracking-wider text-primary">Seu convite</div>
-            <div className="mt-3 overflow-hidden rounded-2xl">
-              <img src={product.image} alt={product.title} className="aspect-[4/5] w-full object-cover" />
+            <div className="mt-3 overflow-hidden rounded-2xl bg-muted">
+              <img
+                src={product.image}
+                alt={product.title}
+                className="aspect-[9/16] w-full object-cover"
+              />
             </div>
             <h3 className="mt-3 font-display text-lg">{product.title}</h3>
             <div className="text-xs text-muted-foreground">{product.categoryName}</div>
-            <div className="mt-4 flex items-baseline justify-between border-t border-border/60 pt-4">
+            <dl className="mt-4 space-y-1.5 border-t border-border/60 pt-4 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Preço</dt>
+                <dd className="font-semibold">{formatBRL(product.price)}</dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Quantidade</dt>
+                <dd className="font-semibold">1</dd>
+              </div>
+            </dl>
+            <div className="mt-3 flex items-baseline justify-between border-t border-border/60 pt-3">
               <span className="text-sm font-semibold">Total</span>
               <span className="text-2xl font-bold text-primary">{formatBRL(product.price)}</span>
+            </div>
+            <div className="mt-3 rounded-xl bg-primary/10 px-3 py-2 text-center text-xs font-bold text-primary">
+              Pagamento apenas por PIX (PicPay)
             </div>
             <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
               ⏱️ Entrega em até {product.deliveryHours}h após pagamento

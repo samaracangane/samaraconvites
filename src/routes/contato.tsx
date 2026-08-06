@@ -89,7 +89,7 @@ function Contato() {
             </li>
           </ul>
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            Os pagamentos são processados com segurança pelo Asaas (Pix e cartão de crédito). O
+            O pagamento é feito exclusivamente por PIX (PicPay). O
             atendimento, os ajustes e os pedidos de reembolso são feitos diretamente conosco pelos
             canais acima.
           </p>
