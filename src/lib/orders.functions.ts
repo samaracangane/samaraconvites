@@ -9,7 +9,10 @@ export type PublicOrder = {
   id: string;
   product_title: string;
   product_slug: string;
+  product_image_url: string | null;
+  quantity: number;
   price: number;
+  pix_payload: string | null;
   status: OrderStatus;
   customer_name: string;
   child_name: string;
@@ -28,7 +31,6 @@ const createOrderSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
   customer_phone: z.string().trim().min(8).max(30),
-  customer_document: z.string().trim().min(11).max(20),
   child_name: z.string().trim().min(1).max(120),
   child_age: z.string().trim().max(40).nullish(),
   party_date: z.string().trim().max(20).nullish(),
@@ -71,7 +73,7 @@ export const createOrder = createServerFn({ method: "POST" })
 
     const { data: product, error: productError } = await supabaseAdmin
       .from("products")
-      .select("id, title, slug, price, active")
+      .select("id, title, slug, price, active, image_url, gallery, cover_index")
       .eq("id", data.productId)
       .maybeSingle();
 
@@ -80,10 +82,11 @@ export const createOrder = createServerFn({ method: "POST" })
       throw new Error("Convite indisponível no momento");
     }
 
-    const { getAsaasEnv, isValidCpfCnpj, onlyDigits } = await import("@/lib/asaas.server");
-    if (!isValidCpfCnpj(data.customer_document)) {
-      throw new Error("CPF/CNPJ inválido");
-    }
+    const p = product as any;
+    const gallery: string[] = Array.isArray(p.gallery) ? (p.gallery as string[]) : [];
+    const coverIndex = Number(p.cover_index ?? 0);
+    const productImage: string | null =
+      p.image_url ?? gallery[coverIndex] ?? gallery[0] ?? null;
 
     const user = await getOptionalUser();
 
@@ -93,14 +96,14 @@ export const createOrder = createServerFn({ method: "POST" })
         product_id: (product as any).id,
         product_title: (product as any).title,
         product_slug: (product as any).slug,
+        product_image_url: productImage,
+        quantity: 1,
         price: (product as any).price,
         status: "pending",
-        environment: getAsaasEnv(),
         user_id: user?.id ?? null,
         customer_name: data.customer_name,
         customer_email: data.customer_email.toLowerCase(),
         customer_phone: data.customer_phone,
-        customer_document: onlyDigits(data.customer_document),
         child_name: data.child_name,
         child_age: data.child_age ?? null,
         party_date: data.party_date || null,
@@ -124,23 +127,22 @@ export const createOrder = createServerFn({ method: "POST" })
   });
 
 /**
- * Abre (ou reabre) a cobrança de um pedido pendente no Asaas com o valor exato
- * do pedido. Serve para o primeiro pagamento e para tentar de novo depois.
+ * Gera (ou recupera) o código PIX do pedido. Único meio de pagamento aceito:
+ * PIX na conta PicPay da loja.
  */
 export const startOrderCheckout = createServerFn({ method: "POST" })
   .inputValidator((data: { orderId: string }) => {
     if (!UUID_RE.test(data?.orderId ?? "")) throw new Error("Pedido inválido");
     return data;
   })
-  .handler(async ({ data }): Promise<{ paymentUrl: string }> => {
+  .handler(async ({ data }): Promise<{ pixPayload: string; amount: number }> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { createCheckoutCharge } = await import("@/lib/orders.server");
+    const { buildPixPayload } = await import("@/lib/pix");
+    const { BUSINESS } = await import("@/lib/business");
 
     const { data: order, error } = await supabaseAdmin
       .from("orders")
-      .select(
-        "id, product_title, price, status, customer_email, customer_name, customer_phone, customer_document, environment, payment_url, asaas_payment_id",
-      )
+      .select("id, product_title, price, quantity, status, pix_payload")
       .eq("id", data.orderId)
       .maybeSingle();
 
@@ -149,36 +151,33 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
 
     const o = order as any;
     if (o.status !== "pending") throw new Error("Este pedido não está aguardando pagamento");
-    if (!o.customer_email) throw new Error("Pedido sem e-mail cadastrado");
-    if (!o.customer_document) throw new Error("Pedido sem CPF cadastrado");
 
-    // Reaproveita a cobrança já criada, se existir.
-    if (o.payment_url && o.asaas_payment_id) {
-      return { paymentUrl: o.payment_url as string };
-    }
+    const amount = Math.round(Number(o.price) * Number(o.quantity ?? 1) * 100) / 100;
 
-    const { paymentId, paymentUrl, customerId, env } = await createCheckoutCharge({
-      orderId: o.id,
-      productTitle: o.product_title,
-      price: Number(o.price),
-      customerEmail: o.customer_email,
-      customerName: o.customer_name,
-      customerDocument: o.customer_document,
-      customerPhone: o.customer_phone,
+    if (o.pix_payload) return { pixPayload: o.pix_payload as string, amount };
+
+    const key = process.env["PICPAY_PIX_KEY"];
+    if (!key) throw new Error("Chave PIX do PicPay não configurada");
+
+    const pixPayload = buildPixPayload({
+      key,
+      merchantName: BUSINESS.legalName,
+      merchantCity: BUSINESS.city,
+      amount,
+      txid: o.id.replace(/-/g, "").slice(0, 25),
+      description: null,
     });
 
     await supabaseAdmin
       .from("orders")
       .update({
-        asaas_payment_id: paymentId,
-        asaas_customer_id: customerId,
-        payment_url: paymentUrl,
-        environment: env,
+        pix_payload: pixPayload,
+        payment_method: "PIX_PICPAY",
         updated_at: new Date().toISOString(),
       })
       .eq("id", o.id);
 
-    return { paymentUrl };
+    return { pixPayload, amount };
   });
 
 /**
@@ -195,7 +194,7 @@ export const getPublicOrder = createServerFn({ method: "GET" })
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, product_title, product_slug, price, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
+        "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
       )
       .eq("id", data.orderId)
       .maybeSingle();
@@ -210,7 +209,7 @@ export const listMyOrders = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("orders")
       .select(
-        "id, product_title, product_slug, price, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
+        "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
       )
       .order("created_at", { ascending: false });
     if (error) throw error;
