@@ -20,6 +20,8 @@ type Order = {
   product_id: string | null;
   product_title: string;
   product_slug: string;
+  product_image_url: string | null;
+  quantity: number | null;
   price: number;
   status: OrderStatus;
   customer_name: string;
@@ -191,13 +193,24 @@ function PedidosPage() {
                 onClick={() => setOpenId(o.id)}
                 className="flex w-full items-center gap-4 px-4 py-3 text-left transition hover:bg-muted/40"
               >
+                <div className="h-16 w-10 shrink-0 overflow-hidden rounded-lg bg-muted">
+                  {o.product_image_url && (
+                    <img
+                      src={o.product_image_url}
+                      alt={o.product_title}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="truncate font-semibold">{o.child_name}</span>
                     <span className="text-xs text-muted-foreground">— {o.customer_name}</span>
                   </div>
                   <div className="truncate text-xs text-muted-foreground">
-                    {o.product_title} · {o.customer_phone}
+                    {o.product_title}
+                    {(o.quantity ?? 1) > 1 ? ` ×${o.quantity}` : ""} · {o.customer_phone}
                   </div>
                 </div>
                 <div className="hidden text-right text-xs text-muted-foreground sm:block">
@@ -268,10 +281,22 @@ function OrderDetail({
           <X className="h-4 w-4" />
         </button>
 
-        <div className="mb-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-primary">Pedido</div>
-          <h2 className="font-display text-2xl">{order.child_name}</h2>
-          <div className="text-sm text-muted-foreground">{order.product_title}</div>
+        <div className="mb-4 flex items-start gap-4">
+          {order.product_image_url && (
+            <img
+              src={order.product_image_url}
+              alt={order.product_title}
+              className="h-40 w-[90px] shrink-0 rounded-xl bg-muted object-cover"
+            />
+          )}
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider text-primary">Pedido</div>
+            <h2 className="font-display text-2xl">{order.child_name}</h2>
+            <div className="text-sm text-muted-foreground">
+              {order.product_title}
+              {(order.quantity ?? 1) > 1 ? ` · ${order.quantity} un.` : ""}
+            </div>
+          </div>
         </div>
 
         <div className="mb-5 flex flex-wrap items-center gap-2">
