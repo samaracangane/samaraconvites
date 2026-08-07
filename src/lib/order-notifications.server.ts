@@ -4,6 +4,8 @@ const SITE_URL = "https://www.samaraconvites.com.br";
 export type PaidOrder = {
   id: string;
   product_title: string;
+  product_image_url?: string | null;
+  quantity?: number | null;
   price: number;
   customer_name: string;
   customer_email: string | null;
@@ -30,6 +32,8 @@ export async function notifyOrderPaid(order: PaidOrder) {
   const data = {
     orderId: order.id,
     productTitle: order.product_title,
+    productImageUrl: order.product_image_url ?? null,
+    quantity: order.quantity ?? 1,
     priceFormatted: formatBRL(Number(order.price ?? 0)),
     customerName: order.customer_name,
     customerPhone: order.customer_phone,
@@ -38,6 +42,7 @@ export async function notifyOrderPaid(order: PaidOrder) {
     partyTime: order.party_time,
     partyLocation: order.party_location,
   };
+
 
   try {
     const { sendOrderPaidEmails } = await import("@/lib/order-emails.server");

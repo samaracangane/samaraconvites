@@ -5,6 +5,7 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Preview,
   Section,
   Text,
@@ -14,6 +15,8 @@ import type { TemplateEntry } from './registry'
 interface Props {
   orderId?: string
   productTitle?: string
+  productImageUrl?: string | null
+  quantity?: number
   priceFormatted?: string
   customerName?: string
   customerPhone?: string
@@ -27,6 +30,8 @@ interface Props {
 const Email = ({
   orderId,
   productTitle,
+  productImageUrl,
+  quantity,
   priceFormatted,
   customerName,
   customerPhone,
@@ -43,7 +48,11 @@ const Email = ({
       <Container style={container}>
         <Heading style={h1}>Novo pedido pago 🎉</Heading>
         <Section style={card}>
+          {productImageUrl ? (
+            <Img src={productImageUrl} alt={productTitle ?? 'Produto'} style={thumb} />
+          ) : null}
           <Text style={line}><b>Produto:</b> {productTitle ?? '—'}</Text>
+          <Text style={line}><b>Quantidade:</b> {quantity ?? 1}</Text>
           <Text style={line}><b>Valor:</b> {priceFormatted ?? '—'}</Text>
           <Text style={line}><b>Cliente:</b> {customerName ?? '—'}</Text>
           <Text style={line}><b>WhatsApp:</b> {customerPhone ?? '—'}</Text>
@@ -66,6 +75,8 @@ export const template = {
   previewData: {
     orderId: '2f1c9d10-1111-2222-3333-444455556666',
     productTitle: 'Convite Princesa Encantada',
+    productImageUrl: 'https://placehold.co/240x427/png',
+    quantity: 1,
     priceFormatted: 'R$ 30,00',
     customerName: 'Ana Souza',
     customerPhone: '(11) 99999-0000',
@@ -81,6 +92,7 @@ const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
 const container = { padding: '28px 24px', maxWidth: '560px', margin: '0 auto' }
 const h1 = { fontSize: '22px', color: '#7a4a63', margin: '0 0 16px' }
 const card = { backgroundColor: '#fdf4f8', borderRadius: '12px', padding: '18px 20px' }
+const thumb = { width: '160px', borderRadius: '12px', display: 'block', margin: '0 auto 14px' }
 const line = { fontSize: '15px', color: '#4a3b43', margin: '4px 0' }
 const muted = { fontSize: '12px', color: '#9b8792', margin: '12px 0 0' }
 
