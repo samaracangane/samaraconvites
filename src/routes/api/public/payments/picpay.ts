@@ -142,6 +142,8 @@ export const Route = createFileRoute("/api/public/payments/picpay")({
           await notifyOrderPaid({
             id: o["id"],
             product_title: o["product_title"],
+            product_image_url: o["product_image_url"] ?? null,
+            quantity: Number(o["quantity"] ?? 1),
             price: amountPaid,
             customer_name: o["customer_name"],
             customer_email: o["customer_email"] ?? null,
