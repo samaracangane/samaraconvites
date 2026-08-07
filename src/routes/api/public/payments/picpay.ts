@@ -103,7 +103,7 @@ export const Route = createFileRoute("/api/public/payments/picpay")({
         const { data: order, error } = await supabaseAdmin
           .from("orders")
           .select(
-            "id, status, price, quantity, product_title, customer_name, customer_email, customer_phone, child_name, party_date, party_time, party_location",
+            "id, status, price, quantity, product_title, product_image_url, customer_name, customer_email, customer_phone, child_name, party_date, party_time, party_location",
           )
           .eq("id", orderId)
           .maybeSingle();
