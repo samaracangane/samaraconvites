@@ -177,6 +177,7 @@ function PersonalizarPage() {
                 <Field label="Seu nome" required><input required name="customer_name" className={inputCls} placeholder="Ex: Maria" /></Field>
                 <Field label="Celular com DDD" required><input required name="customer_phone" type="tel" className={inputCls} placeholder="(11) 99999-9999" /></Field>
                 <Field label="E-mail" required hint="Enviamos aqui a confirmação do pagamento e o convite pronto."><input required name="customer_email" type="email" className={inputCls} placeholder="voce@email.com" /></Field>
+                <Field label="CPF ou CNPJ" required hint="Exigido pelo Asaas para emitir a cobrança."><input required name="customer_document" inputMode="numeric" maxLength={18} className={inputCls} placeholder="000.000.000-00" /></Field>
               </div>
             </section>
 
