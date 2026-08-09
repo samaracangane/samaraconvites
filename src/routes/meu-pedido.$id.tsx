@@ -6,8 +6,8 @@ import { PixPayment } from "@/components/site/PixPayment";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { getPublicOrder, startOrderCheckout } from "@/lib/orders.functions";
-import { CheckCircle2, Clock, Download, Sparkles, XCircle } from "lucide-react";
+import { getPublicOrder, startOrderCheckout, syncOrderPayment } from "@/lib/orders.functions";
+import { CheckCircle2, Clock, CreditCard, Download, QrCode, Sparkles, XCircle } from "lucide-react";
 
 export const Route = createFileRoute("/meu-pedido/$id")({
   head: () => ({
@@ -32,13 +32,36 @@ export const Route = createFileRoute("/meu-pedido/$id")({
 });
 
 const STEPS = [
-  { key: "pending", label: "Aguardando pagamento via PIX", icon: Clock },
+  { key: "created", label: "Pedido realizado", icon: CheckCircle2 },
+  { key: "pending", label: "Aguardando pagamento", icon: Clock },
   { key: "paid", label: "Pagamento confirmado", icon: CheckCircle2 },
-  { key: "delivered", label: "Convite entregue", icon: Sparkles },
+  { key: "production", label: "Convite em produção", icon: Sparkles },
+  { key: "delivered", label: "Convite pronto e entregue", icon: Download },
 ] as const;
+
+const PAYMENT_STATUS_LABEL: Record<string, string> = {
+  pending: "Aguardando pagamento",
+  in_analysis: "Pagamento em análise",
+  paid: "Pago",
+  declined: "Pagamento recusado",
+  overdue: "Pagamento vencido",
+  canceled: "Pagamento cancelado",
+  refunded: "Estornado",
+};
+
+const PAYMENT_METHOD_LABEL: Record<string, string> = {
+  PIX: "PIX",
+  CREDIT_CARD: "Cartão de crédito",
+};
 
 function formatBRL(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+}
+
+function stepIndex(status: string) {
+  if (status === "delivered") return 4;
+  if (status === "paid") return 3;
+  return 1;
 }
 
 function MeuPedido() {
@@ -46,29 +69,51 @@ function MeuPedido() {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["public-order", id],
     queryFn: () => getPublicOrder({ data: { orderId: id } }),
-    refetchInterval: 30000,
+    refetchInterval: 15000,
   });
 
   const startCheckoutFn = useServerFn(startOrderCheckout);
-  const [pix, setPix] = useState<string | null>(null);
-  const requested = useRef(false);
+  const syncPaymentFn = useServerFn(syncOrderPayment);
+  const [creating, setCreating] = useState<"PIX" | "CREDIT_CARD" | null>(null);
+  const syncing = useRef(false);
 
   const total = data ? Number(data.price) * Number(data.quantity ?? 1) : 0;
-  const pixPayload = data?.pix_payload ?? pix;
 
-  // Gera o PIX automaticamente se o pedido ainda estiver aguardando pagamento.
+  // Rede de segurança: enquanto estiver pendente, reconsulta o Asaas.
   useEffect(() => {
-    if (!data || data.status !== "pending" || data.pix_payload || requested.current) return;
-    requested.current = true;
-    startCheckoutFn({ data: { orderId: id } })
-      .then((r) => {
-        setPix(r.pixPayload);
-        refetch();
-      })
-      .catch((err) =>
-        toast.error(err instanceof Error ? err.message : "Não foi possível gerar o PIX"),
-      );
-  }, [data, id, startCheckoutFn, refetch]);
+    if (!data || data.status !== "pending" || !data.payment_method) return;
+    const check = async () => {
+      if (syncing.current) return;
+      syncing.current = true;
+      try {
+        await syncPaymentFn({ data: { orderId: id } });
+        await refetch();
+      } catch {
+        /* silencioso */
+      } finally {
+        syncing.current = false;
+      }
+    };
+    const t = setInterval(check, 20000);
+    return () => clearInterval(t);
+  }, [data, id, syncPaymentFn, refetch]);
+
+  async function choose(method: "PIX" | "CREDIT_CARD") {
+    setCreating(method);
+    try {
+      const res = await startCheckoutFn({ data: { orderId: id, method } });
+      await refetch();
+      if (method === "CREDIT_CARD" && res.paymentUrl) {
+        window.open(res.paymentUrl, "_blank", "noopener");
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível gerar a cobrança");
+    } finally {
+      setCreating(null);
+    }
+  }
+
+  const current = data ? stepIndex(data.status) : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -102,7 +147,10 @@ function MeuPedido() {
                 <h2 className="mt-1 font-display text-2xl">{data.product_title}</h2>
                 <div className="mt-1 text-sm text-muted-foreground">
                   Para {data.child_name} · pedido em{" "}
-                  {new Date(data.created_at).toLocaleDateString("pt-BR")}
+                  {new Date(data.created_at).toLocaleString("pt-BR", {
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  })}
                 </div>
 
                 <dl className="mt-4 space-y-1.5 border-t border-border/60 pt-4 text-sm">
@@ -114,6 +162,28 @@ function MeuPedido() {
                     <dt className="text-muted-foreground">Quantidade</dt>
                     <dd className="font-semibold">{data.quantity ?? 1}</dd>
                   </div>
+                  <div className="flex items-center justify-between">
+                    <dt className="text-muted-foreground">Forma de pagamento</dt>
+                    <dd className="font-semibold">
+                      {data.payment_method
+                        ? (PAYMENT_METHOD_LABEL[data.payment_method] ?? data.payment_method)
+                        : "A escolher"}
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <dt className="text-muted-foreground">Status do pagamento</dt>
+                    <dd className="font-semibold">
+                      {PAYMENT_STATUS_LABEL[data.payment_status ?? "pending"] ?? "Aguardando pagamento"}
+                    </dd>
+                  </div>
+                  {data.paid_at && (
+                    <div className="flex items-center justify-between">
+                      <dt className="text-muted-foreground">Pago em</dt>
+                      <dd className="font-semibold">
+                        {new Date(data.paid_at).toLocaleString("pt-BR")}
+                      </dd>
+                    </div>
+                  )}
                   <div className="flex items-baseline justify-between border-t border-border/60 pt-2">
                     <dt className="font-semibold">
                       {data.status === "pending" ? "Valor a pagar" : "Valor pago"}
@@ -123,7 +193,7 @@ function MeuPedido() {
                 </dl>
 
                 <div className="mt-4 rounded-2xl bg-muted/60 px-4 py-3 text-center text-sm font-semibold">
-                  {data.status === "pending" && "Aguardando confirmação do pagamento via PIX"}
+                  {data.status === "pending" && "Aguardando confirmação do pagamento"}
                   {data.status === "paid" && "Pagamento confirmado — convite em produção"}
                   {data.status === "delivered" && "Convite entregue 💗"}
                   {data.status === "canceled" && "Pedido cancelado ou reembolsado"}
@@ -137,9 +207,8 @@ function MeuPedido() {
               </div>
             ) : (
               <ol className="space-y-4 rounded-3xl border border-border bg-card p-6">
-                {STEPS.map((step) => {
-                  const order = ["pending", "paid", "delivered"];
-                  const done = order.indexOf(data.status) >= order.indexOf(step.key);
+                {STEPS.map((step, i) => {
+                  const done = i <= current;
                   const Icon = step.icon;
                   return (
                     <li key={step.key} className="flex items-center gap-3">
@@ -156,17 +225,77 @@ function MeuPedido() {
                     </li>
                   );
                 })}
+                {data.payment_updated_at && (
+                  <li className="border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                    Última atualização do pagamento:{" "}
+                    {new Date(data.payment_updated_at).toLocaleString("pt-BR")}
+                  </li>
+                )}
               </ol>
             )}
 
-            {data.status === "pending" &&
-              (pixPayload ? (
-                <PixPayment payload={pixPayload} amount={total} />
-              ) : (
-                <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 text-center text-sm text-muted-foreground">
-                  Gerando seu PIX…
+            {data.status === "pending" && (
+              <div className="space-y-4">
+                {/* Escolha da forma de pagamento */}
+                <div className="rounded-3xl border border-border bg-card p-6">
+                  <div className="text-xs font-bold uppercase tracking-wider text-primary">
+                    Como você quer pagar?
+                  </div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => choose("PIX")}
+                      disabled={creating !== null}
+                      className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition disabled:opacity-60 ${
+                        data.payment_method === "PIX"
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:border-primary/60"
+                      }`}
+                    >
+                      <QrCode className="h-4 w-4" />
+                      {creating === "PIX" ? "Gerando PIX…" : "PIX"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => choose("CREDIT_CARD")}
+                      disabled={creating !== null}
+                      className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition disabled:opacity-60 ${
+                        data.payment_method === "CREDIT_CARD"
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:border-primary/60"
+                      }`}
+                    >
+                      <CreditCard className="h-4 w-4" />
+                      {creating === "CREDIT_CARD" ? "Abrindo checkout…" : "Cartão de crédito"}
+                    </button>
+                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    O pagamento é processado com segurança pelo Asaas. Nenhum dado do cartão passa
+                    ou fica guardado na nossa loja.
+                  </p>
                 </div>
-              ))}
+
+                {data.payment_method === "PIX" && data.pix_payload && (
+                  <PixPayment
+                    payload={data.pix_payload}
+                    amount={total}
+                    qrImage={data.pix_qr_image}
+                    expiresAt={data.pix_expires_at}
+                  />
+                )}
+
+                {data.payment_method === "CREDIT_CARD" && data.payment_url && (
+                  <a
+                    href={data.payment_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-full bg-primary-gradient px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow"
+                  >
+                    <CreditCard className="h-4 w-4" /> Abrir pagamento seguro no Asaas
+                  </a>
+                )}
+              </div>
+            )}
 
             {data.delivered_media_url && (
               <a
