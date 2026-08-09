@@ -310,7 +310,7 @@ export const getPublicOrder = createServerFn({ method: "GET" })
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
+        PUBLIC_ORDER_COLUMNS,
       )
       .eq("id", data.orderId)
       .maybeSingle();
@@ -325,7 +325,7 @@ export const listMyOrders = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("orders")
       .select(
-        "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
+        PUBLIC_ORDER_COLUMNS,
       )
       .order("created_at", { ascending: false });
     if (error) throw error;
