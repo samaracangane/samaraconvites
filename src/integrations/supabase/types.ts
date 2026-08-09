@@ -128,9 +128,13 @@ export type Database = {
           party_map_url: string | null
           party_time: string | null
           payment_method: string | null
+          payment_status: string
+          payment_updated_at: string | null
           payment_url: string | null
           photo_url: string | null
+          pix_expires_at: string | null
           pix_payload: string | null
+          pix_qr_image: string | null
           price: number
           product_id: string | null
           product_image_url: string | null
@@ -171,9 +175,13 @@ export type Database = {
           party_map_url?: string | null
           party_time?: string | null
           payment_method?: string | null
+          payment_status?: string
+          payment_updated_at?: string | null
           payment_url?: string | null
           photo_url?: string | null
+          pix_expires_at?: string | null
           pix_payload?: string | null
+          pix_qr_image?: string | null
           price?: number
           product_id?: string | null
           product_image_url?: string | null
@@ -214,9 +222,13 @@ export type Database = {
           party_map_url?: string | null
           party_time?: string | null
           payment_method?: string | null
+          payment_status?: string
+          payment_updated_at?: string | null
           payment_url?: string | null
           photo_url?: string | null
+          pix_expires_at?: string | null
           pix_payload?: string | null
+          pix_qr_image?: string | null
           price?: number
           product_id?: string | null
           product_image_url?: string | null
@@ -270,6 +282,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      payment_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          order_id: string | null
+          payload: Json
+          payment_id: string | null
+          provider: string
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id: string
+          order_id?: string | null
+          payload?: Json
+          payment_id?: string | null
+          provider?: string
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          order_id?: string | null
+          payload?: Json
+          payment_id?: string | null
+          provider?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
