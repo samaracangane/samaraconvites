@@ -329,6 +329,57 @@ function OrderDetail({
           </span>
         </div>
 
+        {/* Dados da cobrança no Asaas */}
+        <div className="mb-5 rounded-2xl border border-border bg-muted/40 p-4 text-sm">
+          <div className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">
+            Pagamento (Asaas)
+          </div>
+          <div className="grid gap-1 sm:grid-cols-2">
+            <div>
+              <span className="text-muted-foreground">Método: </span>
+              {order.payment_method === "CREDIT_CARD"
+                ? "Cartão de crédito"
+                : (order.payment_method ?? "—")}
+            </div>
+            <div>
+              <span className="text-muted-foreground">Status: </span>
+              {PAYMENT_STATUS_LABEL[order.payment_status ?? ""] ?? (order.payment_status || "—")}
+            </div>
+            <div>
+              <span className="text-muted-foreground">Valor pago: </span>
+              {order.amount_paid != null ? formatBRL(Number(order.amount_paid)) : "—"}
+            </div>
+            <div>
+              <span className="text-muted-foreground">Pago em: </span>
+              {order.paid_at ? new Date(order.paid_at).toLocaleString("pt-BR") : "—"}
+            </div>
+            <div className="sm:col-span-2">
+              <span className="text-muted-foreground">CPF/CNPJ: </span>
+              {order.customer_document ?? "—"}
+            </div>
+            <div className="sm:col-span-2 break-all">
+              <span className="text-muted-foreground">Cobrança: </span>
+              {order.asaas_payment_id ?? "—"}
+              {order.payment_url && (
+                <a
+                  href={order.payment_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="ml-2 inline-flex items-center gap-1 text-primary hover:underline"
+                >
+                  Abrir fatura <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+            {order.payment_updated_at && (
+              <div className="sm:col-span-2 text-xs text-muted-foreground">
+                Última atualização: {new Date(order.payment_updated_at).toLocaleString("pt-BR")}
+              </div>
+            )}
+          </div>
+        </div>
+
+
         <div className="mb-5 flex flex-wrap gap-2">
           <a
             href={waSendLink}
