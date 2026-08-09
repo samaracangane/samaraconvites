@@ -239,7 +239,7 @@ function PersonalizarPage() {
                 : `Pagar ${formatBRL(product.price)} com PIX`}
             </button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              Pagamento exclusivamente via PIX (PicPay). Na próxima tela você recebe o QR Code e o
+              Pagamento por PIX ou cartão de crédito via Asaas. Na próxima tela você escolhe a forma e recebe o QR Code ou o
               código copia e cola. A confirmação chega por e-mail.
             </p>
           </form>
@@ -271,7 +271,7 @@ function PersonalizarPage() {
               <span className="text-2xl font-bold text-primary">{formatBRL(product.price)}</span>
             </div>
             <div className="mt-3 rounded-xl bg-primary/10 px-3 py-2 text-center text-xs font-bold text-primary">
-              Pagamento apenas por PIX (PicPay)
+              Pagamento por PIX ou cartão (Asaas)
             </div>
             <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
               ⏱️ Entrega em até {product.deliveryHours}h após pagamento

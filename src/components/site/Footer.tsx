@@ -76,7 +76,7 @@ export function Footer() {
           {BUSINESS.taxId} · {BUSINESS_ADDRESS}
         </p>
         <p>
-          Pagamento exclusivamente via PIX (PicPay). A venda é
+          Pagamento via PIX ou cartão de crédito (Asaas). A venda é
           realizada diretamente por {BUSINESS.legalName}.
         </p>
       </div>

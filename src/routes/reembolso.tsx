@@ -50,7 +50,7 @@ function ReembolsoPage() {
           <section>
             <h2 className="font-display text-2xl text-foreground">Como solicitar</h2>
             <p className="mt-2">
-              Os pagamentos são recebidos por PIX (PicPay) e os reembolsos são solicitados diretamente
+              Os pagamentos são recebidos por PIX ou cartão de crédito via Asaas e os reembolsos são solicitados diretamente
               conosco. Para pedir o reembolso, fale com a gente pela{" "}
               <Link to="/contato" className="text-primary underline">
                 página de contato
