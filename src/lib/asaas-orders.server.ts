@@ -52,7 +52,7 @@ export async function applyAsaasPaymentStatus(
 
   const { error: updateError } = await supabaseAdmin
     .from("orders")
-    .update(update)
+    .update(update as never)
     .eq("id", orderId);
   if (updateError) throw updateError;
 
