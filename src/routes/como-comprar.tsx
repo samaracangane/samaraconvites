@@ -35,7 +35,7 @@ const steps = [
   },
   {
     t: "3. Pague com segurança",
-    d: "O pagamento é feito exclusivamente por PIX (PicPay): mostramos o QR Code e o código copia e cola na hora. Você recebe a confirmação por e-mail automaticamente.",
+    d: "O pagamento é feito por PIX ou cartão de crédito, processado com segurança pelo Asaas: no PIX mostramos o QR Code e o código copia e cola na hora; no cartão você é levado ao checkout seguro do Asaas. Você recebe a confirmação por e-mail automaticamente.",
   },
   {
     t: "4. Receba seu convite",

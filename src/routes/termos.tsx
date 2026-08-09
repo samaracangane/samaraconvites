@@ -147,7 +147,7 @@ function TermosPage() {
               .
             </p>
             <p className="mt-2">
-              O único meio de pagamento aceito é PIX, recebido na conta PicPay da loja. A venda, o suporte e os
+              Os meios de pagamento aceitos são PIX e cartão de crédito, processados pelo Asaas. A venda, o suporte e os
               reembolsos são realizados diretamente por nós.
             </p>
           </section>

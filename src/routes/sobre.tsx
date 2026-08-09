@@ -39,7 +39,7 @@ function Sobre() {
           </p>
           <p className="mt-1">
             <strong className="text-foreground">Pagamentos:</strong> aceitamos exclusivamente PIX, recebido na
-            conta PicPay da loja. A venda é realizada diretamente por nós.
+            plataforma de pagamentos Asaas (PIX e cartão de crédito). A venda é realizada diretamente por nós.
           </p>
         </div>
 

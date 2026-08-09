@@ -116,6 +116,7 @@ function PersonalizarPage() {
           customer_name: get("customer_name") ?? "",
           customer_email: get("customer_email") ?? "",
           customer_phone: get("customer_phone") ?? "",
+          customer_document: get("customer_document") ?? "",
           child_name: get("child_name") ?? "",
           child_age: get("child_age"),
           party_date: get("party_date"),
@@ -134,10 +135,10 @@ function PersonalizarPage() {
       });
 
       try {
-        await startCheckoutFn({ data: { orderId } });
+        await startCheckoutFn({ data: { orderId, method: "PIX" } });
       } catch (checkoutError) {
         console.error(checkoutError);
-        toast.error("Pedido salvo! Abra a página do pedido para ver o PIX.");
+        toast.error("Pedido salvo! Abra a página do pedido para escolher o pagamento.");
       }
       window.location.href = `/meu-pedido/${orderId}`;
 
@@ -176,6 +177,7 @@ function PersonalizarPage() {
                 <Field label="Seu nome" required><input required name="customer_name" className={inputCls} placeholder="Ex: Maria" /></Field>
                 <Field label="Celular com DDD" required><input required name="customer_phone" type="tel" className={inputCls} placeholder="(11) 99999-9999" /></Field>
                 <Field label="E-mail" required hint="Enviamos aqui a confirmação do pagamento e o convite pronto."><input required name="customer_email" type="email" className={inputCls} placeholder="voce@email.com" /></Field>
+                <Field label="CPF ou CNPJ" required hint="Exigido pelo Asaas para emitir a cobrança."><input required name="customer_document" inputMode="numeric" maxLength={18} className={inputCls} placeholder="000.000.000-00" /></Field>
               </div>
             </section>
 
@@ -237,7 +239,7 @@ function PersonalizarPage() {
                 : `Pagar ${formatBRL(product.price)} com PIX`}
             </button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              Pagamento exclusivamente via PIX (PicPay). Na próxima tela você recebe o QR Code e o
+              Pagamento por PIX ou cartão de crédito via Asaas. Na próxima tela você escolhe a forma e recebe o QR Code ou o
               código copia e cola. A confirmação chega por e-mail.
             </p>
           </form>
@@ -269,7 +271,7 @@ function PersonalizarPage() {
               <span className="text-2xl font-bold text-primary">{formatBRL(product.price)}</span>
             </div>
             <div className="mt-3 rounded-xl bg-primary/10 px-3 py-2 text-center text-xs font-bold text-primary">
-              Pagamento apenas por PIX (PicPay)
+              Pagamento por PIX ou cartão (Asaas)
             </div>
             <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
               ⏱️ Entrega em até {product.deliveryHours}h após pagamento

@@ -13,6 +13,13 @@ export type PublicOrder = {
   quantity: number;
   price: number;
   pix_payload: string | null;
+  pix_qr_image: string | null;
+  pix_expires_at: string | null;
+  payment_url: string | null;
+  payment_method: string | null;
+  payment_status: string | null;
+  paid_at: string | null;
+  payment_updated_at: string | null;
   status: OrderStatus;
   customer_name: string;
   child_name: string;
@@ -24,6 +31,9 @@ export type PublicOrder = {
   created_at: string;
 };
 
+export const PUBLIC_ORDER_COLUMNS =
+  "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, pix_qr_image, pix_expires_at, payment_url, payment_method, payment_status, paid_at, payment_updated_at, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at";
+
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const createOrderSchema = z.object({
@@ -31,6 +41,11 @@ const createOrderSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
   customer_phone: z.string().trim().min(8).max(30),
+  customer_document: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, ""))
+    .refine((v) => v.length === 11 || v.length === 14, "Informe um CPF ou CNPJ válido"),
   child_name: z.string().trim().min(1).max(120),
   child_age: z.string().trim().max(40).nullish(),
   party_date: z.string().trim().max(20).nullish(),
@@ -46,6 +61,7 @@ const createOrderSchema = z.object({
   photo_url: z.string().trim().max(1000).nullish(),
   music_url: z.string().trim().max(1000).nullish(),
 });
+
 
 /** Identifica a usuária logada, se houver bearer na requisição (opcional). */
 async function getOptionalUser(): Promise<{ id: string; email: string | null } | null> {
@@ -118,6 +134,8 @@ export const createOrder = createServerFn({ method: "POST" })
         notes: data.notes ?? null,
         photo_url: data.photo_url ?? null,
         music_url: data.music_url ?? null,
+        customer_document: data.customer_document,
+        payment_status: "pending",
       })
       .select("id")
       .single();
@@ -126,23 +144,35 @@ export const createOrder = createServerFn({ method: "POST" })
     return { orderId: (inserted as any).id as string };
   });
 
+export type CheckoutResult = {
+  method: "PIX" | "CREDIT_CARD";
+  amount: number;
+  pixPayload: string | null;
+  pixQrImage: string | null;
+  pixExpiresAt: string | null;
+  paymentUrl: string | null;
+};
+
 /**
- * Gera (ou recupera) o código PIX do pedido. Único meio de pagamento aceito:
- * PIX na conta PicPay da loja.
+ * Cria (ou recupera) a cobrança do pedido no Asaas.
+ * PIX -> QR Code + copia e cola gerados pelo Asaas.
+ * Cartão de crédito -> checkout hospedado do Asaas (a loja nunca vê o cartão).
  */
 export const startOrderCheckout = createServerFn({ method: "POST" })
-  .inputValidator((data: { orderId: string }) => {
+  .inputValidator((data: { orderId: string; method?: "PIX" | "CREDIT_CARD" }) => {
     if (!UUID_RE.test(data?.orderId ?? "")) throw new Error("Pedido inválido");
-    return data;
+    const method = data?.method === "CREDIT_CARD" ? "CREDIT_CARD" : "PIX";
+    return { orderId: data.orderId, method } as const;
   })
-  .handler(async ({ data }): Promise<{ pixPayload: string; amount: number }> => {
+  .handler(async ({ data }): Promise<CheckoutResult> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { buildPixPayload } = await import("@/lib/pix");
-    const { BUSINESS } = await import("@/lib/business");
+    const asaas = await import("@/lib/asaas.server");
 
     const { data: order, error } = await supabaseAdmin
       .from("orders")
-      .select("id, product_title, price, quantity, status, pix_payload")
+      .select(
+        "id, product_title, price, quantity, status, payment_method, payment_status, pix_payload, pix_qr_image, pix_expires_at, payment_url, customer_name, customer_email, customer_phone, customer_document, asaas_customer_id, asaas_payment_id",
+      )
       .eq("id", data.orderId)
       .maybeSingle();
 
@@ -154,31 +184,117 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
 
     const amount = Math.round(Number(o.price) * Number(o.quantity ?? 1) * 100) / 100;
 
-    if (o.pix_payload) return { pixPayload: o.pix_payload as string, amount };
+    // Já existe cobrança criada com o mesmo meio de pagamento: reaproveita.
+    if (o.asaas_payment_id && o.payment_method === data.method) {
+      if (data.method === "CREDIT_CARD" && o.payment_url) {
+        return {
+          method: data.method,
+          amount,
+          pixPayload: null,
+          pixQrImage: null,
+          pixExpiresAt: null,
+          paymentUrl: o.payment_url,
+        };
+      }
+      if (data.method === "PIX" && o.pix_payload) {
+        return {
+          method: data.method,
+          amount,
+          pixPayload: o.pix_payload,
+          pixQrImage: o.pix_qr_image ?? null,
+          pixExpiresAt: o.pix_expires_at ?? null,
+          paymentUrl: o.payment_url ?? null,
+        };
+      }
+    }
 
-    const key = process.env["PICPAY_PIX_KEY"];
-    if (!key) throw new Error("Chave PIX do PicPay não configurada");
+    if (!o.customer_document) throw new Error("CPF/CNPJ obrigatório para gerar a cobrança");
 
-    const pixPayload = buildPixPayload({
-      key,
-      merchantName: BUSINESS.legalName,
-      merchantCity: BUSINESS.city,
-      amount,
-      txid: o.id.replace(/-/g, "").slice(0, 25),
-      description: null,
+    const customerId: string =
+      o.asaas_customer_id ??
+      (await asaas.findOrCreateCustomer({
+        name: o.customer_name,
+        email: o.customer_email ?? null,
+        cpfCnpj: o.customer_document,
+        phone: o.customer_phone,
+      }));
+
+    const payment = await asaas.createPayment({
+      customerId,
+      billingType: data.method,
+      value: amount,
+      description: `${o.product_title} — pedido ${String(o.id).slice(0, 8).toUpperCase()}`,
+      externalReference: o.id,
+      dueDate: asaas.dueDateInDays(data.method === "PIX" ? 1 : 3),
     });
+
+    let pixPayload: string | null = null;
+    let pixQrImage: string | null = null;
+    let pixExpiresAt: string | null = null;
+
+    if (data.method === "PIX") {
+      const qr = await asaas.getPixQrCode(payment.id);
+      pixPayload = qr.payload ?? null;
+      pixQrImage = qr.encodedImage ? `data:image/png;base64,${qr.encodedImage}` : null;
+      pixExpiresAt = qr.expirationDate ? new Date(qr.expirationDate).toISOString() : null;
+    }
 
     await supabaseAdmin
       .from("orders")
       .update({
+        asaas_customer_id: customerId,
+        asaas_payment_id: payment.id,
+        payment_method: data.method,
+        payment_status: asaas.mapAsaasStatus(payment.status).payment_status,
+        payment_url: payment.invoiceUrl ?? null,
         pix_payload: pixPayload,
-        payment_method: "PIX_PICPAY",
+        pix_qr_image: pixQrImage,
+        pix_expires_at: pixExpiresAt,
+        payment_updated_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", o.id);
 
-    return { pixPayload, amount };
+    return {
+      method: data.method,
+      amount,
+      pixPayload,
+      pixQrImage,
+      pixExpiresAt,
+      paymentUrl: payment.invoiceUrl ?? null,
+    };
   });
+
+/**
+ * Reconsulta o status da cobrança direto no Asaas (rede de segurança caso o
+ * webhook atrase). O pedido só vira "pago" com a confirmação oficial do Asaas.
+ */
+export const syncOrderPayment = createServerFn({ method: "POST" })
+  .inputValidator((data: { orderId: string }) => {
+    if (!UUID_RE.test(data?.orderId ?? "")) throw new Error("Pedido inválido");
+    return data;
+  })
+  .handler(async ({ data }): Promise<{ status: string }> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { applyAsaasPaymentStatus } = await import("@/lib/asaas-orders.server");
+
+    const { data: order } = await supabaseAdmin
+      .from("orders")
+      .select("id, asaas_payment_id, status")
+      .eq("id", data.orderId)
+      .maybeSingle();
+
+    const o = order as any;
+    if (!o?.asaas_payment_id || o.status !== "pending") {
+      return { status: o?.status ?? "unknown" };
+    }
+
+    const { getPayment } = await import("@/lib/asaas.server");
+    const payment = await getPayment(o.asaas_payment_id);
+    await applyAsaasPaymentStatus(o.id, payment.status, payment.value);
+    return { status: payment.status };
+  });
+
 
 /**
  * Consulta pública de um pedido pelo seu ID (UUID secreto enviado à cliente).
@@ -194,7 +310,7 @@ export const getPublicOrder = createServerFn({ method: "GET" })
     const { data: order, error } = await supabaseAdmin
       .from("orders")
       .select(
-        "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
+        PUBLIC_ORDER_COLUMNS,
       )
       .eq("id", data.orderId)
       .maybeSingle();
@@ -209,7 +325,7 @@ export const listMyOrders = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("orders")
       .select(
-        "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at",
+        PUBLIC_ORDER_COLUMNS,
       )
       .order("created_at", { ascending: false });
     if (error) throw error;
