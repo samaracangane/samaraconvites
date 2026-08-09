@@ -116,6 +116,7 @@ function PersonalizarPage() {
           customer_name: get("customer_name") ?? "",
           customer_email: get("customer_email") ?? "",
           customer_phone: get("customer_phone") ?? "",
+          customer_document: get("customer_document") ?? "",
           child_name: get("child_name") ?? "",
           child_age: get("child_age"),
           party_date: get("party_date"),
@@ -134,10 +135,10 @@ function PersonalizarPage() {
       });
 
       try {
-        await startCheckoutFn({ data: { orderId } });
+        await startCheckoutFn({ data: { orderId, method: "PIX" } });
       } catch (checkoutError) {
         console.error(checkoutError);
-        toast.error("Pedido salvo! Abra a página do pedido para ver o PIX.");
+        toast.error("Pedido salvo! Abra a página do pedido para escolher o pagamento.");
       }
       window.location.href = `/meu-pedido/${orderId}`;
 
