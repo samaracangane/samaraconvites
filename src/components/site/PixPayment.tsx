@@ -1,18 +1,32 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
-import { Check, Copy, QrCode } from "lucide-react";
+import { Check, Copy, QrCode, Clock } from "lucide-react";
 import { toast } from "sonner";
 
 function formatBRL(v: number) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
 
-/** Bloco de pagamento PIX (PicPay): QR Code + código copia e cola. */
-export function PixPayment({ payload, amount }: { payload: string; amount: number }) {
-  const [qr, setQr] = useState<string | null>(null);
+/** Bloco de pagamento PIX gerado pelo Asaas: QR Code + código copia e cola. */
+export function PixPayment({
+  payload,
+  amount,
+  qrImage,
+  expiresAt,
+}: {
+  payload: string;
+  amount: number;
+  qrImage?: string | null;
+  expiresAt?: string | null;
+}) {
+  const [qr, setQr] = useState<string | null>(qrImage ?? null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    if (qrImage) {
+      setQr(qrImage);
+      return;
+    }
     let alive = true;
     QRCode.toDataURL(payload, { width: 480, margin: 1 })
       .then((url) => alive && setQr(url))
@@ -20,7 +34,7 @@ export function PixPayment({ payload, amount }: { payload: string; amount: numbe
     return () => {
       alive = false;
     };
-  }, [payload]);
+  }, [payload, qrImage]);
 
   async function copy() {
     try {
@@ -36,10 +50,17 @@ export function PixPayment({ payload, amount }: { payload: string; amount: numbe
   return (
     <div className="rounded-3xl border border-primary/30 bg-primary/5 p-6 text-center">
       <div className="inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
-        <QrCode className="h-3.5 w-3.5" /> Pagamento somente via PIX (PicPay)
+        <QrCode className="h-3.5 w-3.5" /> Pagamento via PIX
       </div>
 
       <div className="mt-4 font-display text-3xl text-foreground">{formatBRL(amount)}</div>
+
+      {expiresAt && (
+        <div className="mt-1 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Clock className="h-3.5 w-3.5" /> Válido até{" "}
+          {new Date(expiresAt).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
+        </div>
+      )}
 
       <div className="mx-auto mt-4 w-fit rounded-2xl bg-card p-3 shadow-card">
         {qr ? (
@@ -58,8 +79,8 @@ export function PixPayment({ payload, amount }: { payload: string; amount: numbe
       </div>
 
       <p className="mx-auto mt-4 max-w-sm text-sm text-muted-foreground">
-        Abra o PicPay (ou o app do seu banco), escolha <strong>PIX</strong> e escaneie o QR Code —
-        ou use o código copia e cola abaixo.
+        Abra o app do seu banco, escolha <strong>PIX</strong> e escaneie o QR Code — ou use o código
+        copia e cola abaixo.
       </p>
 
       <div className="mt-4 break-all rounded-2xl border border-border bg-card px-4 py-3 text-left text-[11px] leading-relaxed text-muted-foreground">
@@ -76,8 +97,8 @@ export function PixPayment({ payload, amount }: { payload: string; amount: numbe
       </button>
 
       <p className="mt-3 text-xs text-muted-foreground">
-        Após pagar, envie o comprovante pelo WhatsApp para agilizar. A confirmação é feita em
-        instantes e você recebe um e-mail.
+        Assim que o pagamento for confirmado, o status desta página muda sozinho e você recebe um
+        e-mail. Não é preciso enviar comprovante.
       </p>
     </div>
   );

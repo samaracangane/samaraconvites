@@ -34,7 +34,6 @@ import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin.categorias'
 import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as ApiPublicPaymentsPicpayRouteImport } from './routes/api/public/payments/picpay'
 import { Route as ApiPublicPaymentsAsaasRouteImport } from './routes/api/public/payments/asaas'
 
 const TermosRoute = TermosRouteImport.update({
@@ -168,11 +167,6 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicPaymentsPicpayRoute = ApiPublicPaymentsPicpayRouteImport.update({
-  id: '/api/public/payments/picpay',
-  path: '/api/public/payments/picpay',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicPaymentsAsaasRoute = ApiPublicPaymentsAsaasRouteImport.update({
   id: '/api/public/payments/asaas',
   path: '/api/public/payments/asaas',
@@ -204,7 +198,6 @@ export interface FileRoutesByFullPath {
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
-  '/api/public/payments/picpay': typeof ApiPublicPaymentsPicpayRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -231,7 +224,6 @@ export interface FileRoutesByTo {
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
-  '/api/public/payments/picpay': typeof ApiPublicPaymentsPicpayRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -261,7 +253,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
-  '/api/public/payments/picpay': typeof ApiPublicPaymentsPicpayRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -291,7 +282,6 @@ export interface FileRouteTypes {
     | '/admin/vitrines'
     | '/admin/'
     | '/api/public/payments/asaas'
-    | '/api/public/payments/picpay'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -318,7 +308,6 @@ export interface FileRouteTypes {
     | '/admin/vitrines'
     | '/admin'
     | '/api/public/payments/asaas'
-    | '/api/public/payments/picpay'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -347,7 +336,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/vitrines'
     | '/_authenticated/admin/'
     | '/api/public/payments/asaas'
-    | '/api/public/payments/picpay'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -369,7 +357,6 @@ export interface RootRouteChildren {
   PersonalizarSlugRoute: typeof PersonalizarSlugRoute
   ProdutoSlugRoute: typeof ProdutoSlugRoute
   ApiPublicPaymentsAsaasRoute: typeof ApiPublicPaymentsAsaasRoute
-  ApiPublicPaymentsPicpayRoute: typeof ApiPublicPaymentsPicpayRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -550,13 +537,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payments/picpay': {
-      id: '/api/public/payments/picpay'
-      path: '/api/public/payments/picpay'
-      fullPath: '/api/public/payments/picpay'
-      preLoaderRoute: typeof ApiPublicPaymentsPicpayRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/payments/asaas': {
       id: '/api/public/payments/asaas'
       path: '/api/public/payments/asaas'
@@ -619,7 +599,6 @@ const rootRouteChildren: RootRouteChildren = {
   PersonalizarSlugRoute: PersonalizarSlugRoute,
   ProdutoSlugRoute: ProdutoSlugRoute,
   ApiPublicPaymentsAsaasRoute: ApiPublicPaymentsAsaasRoute,
-  ApiPublicPaymentsPicpayRoute: ApiPublicPaymentsPicpayRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
