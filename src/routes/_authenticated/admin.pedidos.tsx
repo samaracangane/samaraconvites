@@ -43,8 +43,28 @@ type Order = {
   music_url: string | null;
   delivered_media_url: string | null;
   delivered_at: string | null;
+  payment_method: string | null;
+  payment_status: string | null;
+  payment_url: string | null;
+  paid_at: string | null;
+  amount_paid: number | null;
+  payment_updated_at: string | null;
+  customer_document: string | null;
+  asaas_payment_id: string | null;
+  asaas_customer_id: string | null;
   created_at: string;
 };
+
+const PAYMENT_STATUS_LABEL: Record<string, string> = {
+  pending: "Aguardando pagamento",
+  in_analysis: "Em análise",
+  paid: "Pago",
+  declined: "Recusado",
+  overdue: "Vencido",
+  canceled: "Cancelado",
+  refunded: "Estornado",
+};
+
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
   pending: "Pendente",
