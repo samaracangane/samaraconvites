@@ -13,6 +13,13 @@ export type PublicOrder = {
   quantity: number;
   price: number;
   pix_payload: string | null;
+  pix_qr_image: string | null;
+  pix_expires_at: string | null;
+  payment_url: string | null;
+  payment_method: string | null;
+  payment_status: string | null;
+  paid_at: string | null;
+  payment_updated_at: string | null;
   status: OrderStatus;
   customer_name: string;
   child_name: string;
@@ -24,6 +31,9 @@ export type PublicOrder = {
   created_at: string;
 };
 
+export const PUBLIC_ORDER_COLUMNS =
+  "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, pix_qr_image, pix_expires_at, payment_url, payment_method, payment_status, paid_at, payment_updated_at, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at";
+
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const createOrderSchema = z.object({
@@ -31,6 +41,11 @@ const createOrderSchema = z.object({
   customer_name: z.string().trim().min(2).max(120),
   customer_email: z.string().trim().email().max(255),
   customer_phone: z.string().trim().min(8).max(30),
+  customer_document: z
+    .string()
+    .trim()
+    .transform((v) => v.replace(/\D/g, ""))
+    .refine((v) => v.length === 11 || v.length === 14, "Informe um CPF ou CNPJ válido"),
   child_name: z.string().trim().min(1).max(120),
   child_age: z.string().trim().max(40).nullish(),
   party_date: z.string().trim().max(20).nullish(),
@@ -46,6 +61,7 @@ const createOrderSchema = z.object({
   photo_url: z.string().trim().max(1000).nullish(),
   music_url: z.string().trim().max(1000).nullish(),
 });
+
 
 /** Identifica a usuária logada, se houver bearer na requisição (opcional). */
 async function getOptionalUser(): Promise<{ id: string; email: string | null } | null> {
