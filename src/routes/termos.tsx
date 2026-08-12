@@ -41,8 +41,7 @@ function TermosPage() {
             <h2 className="font-display text-2xl text-foreground">1. Quem somos</h2>
             <p className="mt-2">
               Este site é operado por <strong className="text-foreground">Samara Encanto Convites</strong>,
-              nome fantasia de <strong className="text-foreground">Samara Roberta Cangane</strong>, CPF
-              419.358.788-67, com sede em Monte Aprazível — SP, Brasil ("nós", "nosso"). Vendemos convites
+              com sede em Monte Aprazível — SP, Brasil ("nós", "nosso"). Vendemos convites
               digitais infantis personalizados, entregues exclusivamente em formato digital (imagem, vídeo ou
               link interativo), sem envio de produto físico. Ao comprar ou utilizar nossos serviços, você
               celebra um contrato diretamente conosco. Contato: WhatsApp (17) 99672-2089 · e-mail
