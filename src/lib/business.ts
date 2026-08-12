@@ -15,4 +15,4 @@ export const BUSINESS = {
 } as const;
 
 export const BUSINESS_ADDRESS = `${BUSINESS.city} — ${BUSINESS.state}, ${BUSINESS.country}`;
-export const BUSINESS_IDENTIFICATION = `${BUSINESS.legalName} (${BUSINESS.taxIdLabel} ${BUSINESS.taxId}) — ${BUSINESS_ADDRESS}`;
+export const BUSINESS_IDENTIFICATION = `${BUSINESS.brand} — ${BUSINESS_ADDRESS}`;
