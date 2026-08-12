@@ -120,11 +120,23 @@ async function fetchProductsWithCategories(): Promise<{
 }
 
 export function useStoreCategories() {
-  return useQuery({ queryKey: ["public", "categories"], queryFn: fetchCategories });
+  return useQuery({
+    queryKey: ["public", "categories"],
+    queryFn: fetchCategories,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+  });
 }
 
 export function useStoreCatalog() {
-  return useQuery({ queryKey: ["public", "catalog"], queryFn: fetchProductsWithCategories });
+  return useQuery({
+    queryKey: ["public", "catalog"],
+    queryFn: fetchProductsWithCategories,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+  });
 }
 
 export function useStoreProduct(slug: string) {
