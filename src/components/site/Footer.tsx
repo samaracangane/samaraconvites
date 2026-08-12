@@ -72,12 +72,11 @@ export function Footer() {
       </div>
       <div className="space-y-1 border-t border-border/60 py-5 text-center text-xs text-muted-foreground">
         <p>
-          © {new Date().getFullYear()} {BUSINESS.brand} — {BUSINESS.legalName} · {BUSINESS.taxIdLabel}{" "}
-          {BUSINESS.taxId} · {BUSINESS_ADDRESS}
+          © {new Date().getFullYear()} {BUSINESS.brand} · {BUSINESS_ADDRESS}
         </p>
         <p>
           Pagamento via PIX ou cartão de crédito (Asaas). A venda é
-          realizada diretamente por {BUSINESS.legalName}.
+          realizada diretamente por {BUSINESS.brand}.
         </p>
       </div>
     </footer>
