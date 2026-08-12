@@ -40,8 +40,7 @@ function PrivacidadePage() {
           <section>
             <h2 className="font-display text-2xl text-foreground">1. Controlador dos dados</h2>
             <p className="mt-2">
-              <strong className="text-foreground">Samara Encanto Convites</strong>, nome fantasia de{" "}
-              <strong className="text-foreground">Samara Roberta Cangane</strong> (CPF 419.358.788-67),
+              <strong className="text-foreground">Samara Encanto Convites</strong>, com sede em
               Monte Aprazível — SP, Brasil, é a controladora dos dados pessoais tratados neste site, ou
               seja, decide como e para quê seus dados são utilizados. Para exercer seus direitos ou tirar
               dúvidas, escreva para srcangane@gmail.com ou use a{" "}
