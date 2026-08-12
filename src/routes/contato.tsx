@@ -72,14 +72,11 @@ function Contato() {
         </div>
 
         <div className="mt-10 rounded-3xl border border-border/60 bg-card p-6 text-left shadow-card">
-          <h2 className="font-display text-xl">Dados do vendedor</h2>
+          <h2 className="font-display text-xl">Dados da loja</h2>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>
-              <strong className="text-foreground">{BUSINESS.brand}</strong> — nome fantasia de{" "}
-              {BUSINESS.legalName}
-            </li>
-            <li>
-              {BUSINESS.taxIdLabel}: {BUSINESS.taxId}
+              <strong className="text-foreground">{BUSINESS.brand}</strong> — convites digitais
+              infantis personalizados
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-primary" /> {BUSINESS_ADDRESS}

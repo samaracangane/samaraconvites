@@ -29,17 +29,17 @@ function Sobre() {
         </p>
         <div className="mx-auto mt-6 max-w-2xl rounded-3xl border border-border/60 bg-card p-6 text-left text-sm text-muted-foreground shadow-card">
           <p>
-            <strong className="text-foreground">Vendedor:</strong> Samara Encanto Convites, nome fantasia de
-            Samara Roberta Cangane (CPF 419.358.788-67).
+            <strong className="text-foreground">Loja:</strong> Samara Encanto Convites — convites
+            digitais infantis personalizados.
           </p>
-          <p className="mt-1"><strong className="text-foreground">Endereço:</strong> Monte Aprazível — SP, Brasil.</p>
+          <p className="mt-1"><strong className="text-foreground">Localização:</strong> Monte Aprazível — SP, Brasil.</p>
           <p className="mt-1">
             <strong className="text-foreground">Atendimento:</strong> WhatsApp (17) 99672-2089 · srcangane@gmail.com ·
             segunda a sexta, das 9h às 18h.
           </p>
           <p className="mt-1">
-            <strong className="text-foreground">Pagamentos:</strong> aceitamos exclusivamente PIX, recebido na
-            plataforma de pagamentos Asaas (PIX e cartão de crédito). A venda é realizada diretamente por nós.
+            <strong className="text-foreground">Pagamentos:</strong> PIX e cartão de crédito, processados com
+            segurança pela plataforma Asaas. A venda é realizada diretamente por nós.
           </p>
         </div>
 

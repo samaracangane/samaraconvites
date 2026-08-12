@@ -2,10 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Search, Heart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.png";
-import { categories } from "@/lib/mock-data";
+import { useStoreCategories } from "@/lib/store-queries";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const { data: categories = [] } = useStoreCategories();
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:py-4">
@@ -66,7 +67,7 @@ export function Header() {
             <Link to="/sobre" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Quem somos</Link>
             <Link to="/como-comprar" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 hover:bg-muted">Como comprar</Link>
             <div className="mt-2 border-t border-border/60 pt-2 text-xs uppercase tracking-wider text-muted-foreground">Categorias populares</div>
-            {categories.slice(0, 6).map((c) => (
+            {categories.map((c) => (
               <Link
                 key={c.slug}
                 to="/categoria/$slug"

@@ -1,9 +1,6 @@
-// Dados oficiais do vendedor.
+// Dados públicos do vendedor (sem dados pessoais: nome completo e CPF não são exibidos).
 export const BUSINESS = {
   brand: "Samara Encanto Convites",
-  legalName: "Samara Roberta Cangane",
-  taxId: "419.358.788-67",
-  taxIdLabel: "CPF",
   city: "Monte Aprazível",
   state: "SP",
   country: "Brasil",
@@ -18,4 +15,4 @@ export const BUSINESS = {
 } as const;
 
 export const BUSINESS_ADDRESS = `${BUSINESS.city} — ${BUSINESS.state}, ${BUSINESS.country}`;
-export const BUSINESS_IDENTIFICATION = `${BUSINESS.legalName} (${BUSINESS.taxIdLabel} ${BUSINESS.taxId}) — ${BUSINESS_ADDRESS}`;
+export const BUSINESS_IDENTIFICATION = `${BUSINESS.brand} — ${BUSINESS_ADDRESS}`;

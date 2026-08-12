@@ -291,7 +291,7 @@ function MeuPedido() {
                     rel="noreferrer"
                     className="flex items-center justify-center gap-2 rounded-full bg-primary-gradient px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow"
                   >
-                    <CreditCard className="h-4 w-4" /> Abrir pagamento seguro no Asaas
+                    <CreditCard className="h-4 w-4" /> Pagar agora
                   </a>
                 )}
               </div>
