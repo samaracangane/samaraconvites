@@ -236,7 +236,7 @@ function PersonalizarPage() {
               <Sparkles className="h-4 w-4" />{" "}
               {saving
                 ? "Processando..."
-                : `Pagar ${formatBRL(product.price)} com PIX`}
+                : "Pagar agora"}
             </button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
               Pagamento por PIX ou cartão de crédito via Asaas. Na próxima tela você escolhe a forma e recebe o QR Code ou o
