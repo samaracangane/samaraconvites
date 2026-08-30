@@ -48,6 +48,7 @@ function PersonalizarPage() {
   const [musicFile, setMusicFile] = useState<File | null>(null);
   const createOrderFn = useServerFn(createOrder);
   const startCheckoutFn = useServerFn(startOrderCheckout);
+  const uploadOrderMediaFn = useServerFn(uploadOrderMedia);
 
   if (isLoading) {
     return (
