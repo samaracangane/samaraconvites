@@ -5,7 +5,7 @@ import { formatBRL } from "@/lib/mock-data";
 import { useStoreProduct } from "@/lib/store-queries";
 import { useServerFn } from "@tanstack/react-start";
 import { createOrder, startOrderCheckout } from "@/lib/orders.functions";
-import { uploadMedia } from "@/lib/admin-media";
+import { uploadOrderMedia } from "@/lib/order-media.functions";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -48,6 +48,7 @@ function PersonalizarPage() {
   const [musicFile, setMusicFile] = useState<File | null>(null);
   const createOrderFn = useServerFn(createOrder);
   const startCheckoutFn = useServerFn(startOrderCheckout);
+  const uploadOrderMediaFn = useServerFn(uploadOrderMedia);
 
   if (isLoading) {
     return (
@@ -104,10 +105,18 @@ function PersonalizarPage() {
       let photo_url: string | null = null;
       let music_url: string | null = null;
       if (photoFile) {
-        try { photo_url = await uploadMedia(photoFile, "orders"); } catch { /* opcional */ }
+        try {
+          const fdUpload = new FormData();
+          fdUpload.set("file", photoFile);
+          photo_url = (await uploadOrderMediaFn({ data: fdUpload })).url;
+        } catch { /* opcional */ }
       }
       if (musicFile) {
-        try { music_url = await uploadMedia(musicFile, "orders"); } catch { /* opcional */ }
+        try {
+          const fdUpload = new FormData();
+          fdUpload.set("file", musicFile);
+          music_url = (await uploadOrderMediaFn({ data: fdUpload })).url;
+        } catch { /* opcional */ }
       }
 
       const { orderId } = await createOrderFn({
