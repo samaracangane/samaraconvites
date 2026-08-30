@@ -104,10 +104,18 @@ function PersonalizarPage() {
       let photo_url: string | null = null;
       let music_url: string | null = null;
       if (photoFile) {
-        try { photo_url = await uploadMedia(photoFile, "orders"); } catch { /* opcional */ }
+        try {
+          const fdUpload = new FormData();
+          fdUpload.set("file", photoFile);
+          photo_url = (await uploadOrderMediaFn({ data: fdUpload })).url;
+        } catch { /* opcional */ }
       }
       if (musicFile) {
-        try { music_url = await uploadMedia(musicFile, "orders"); } catch { /* opcional */ }
+        try {
+          const fdUpload = new FormData();
+          fdUpload.set("file", musicFile);
+          music_url = (await uploadOrderMediaFn({ data: fdUpload })).url;
+        } catch { /* opcional */ }
       }
 
       const { orderId } = await createOrderFn({
