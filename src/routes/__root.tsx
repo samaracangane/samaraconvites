@@ -95,6 +95,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    scripts: [
+      {
+        children: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','26146580185043768');fbq('track','PageView');`,
+      },
+    ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
@@ -121,6 +126,15 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <noscript>
+          <img
+            height={1}
+            width={1}
+            style={{ display: "none" }}
+            src="https://www.facebook.com/tr?id=26146580185043768&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
         <Scripts />
       </body>
     </html>
