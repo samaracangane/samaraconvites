@@ -5,7 +5,7 @@ import { formatBRL } from "@/lib/mock-data";
 import { useStoreProduct } from "@/lib/store-queries";
 import { useServerFn } from "@tanstack/react-start";
 import { createOrder, startOrderCheckout } from "@/lib/orders.functions";
-import { uploadMedia } from "@/lib/admin-media";
+import { uploadOrderMedia } from "@/lib/order-media.functions";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
