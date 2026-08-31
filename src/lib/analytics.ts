@@ -18,16 +18,19 @@ export function initGoogleAnalytics() {
   initialized = true;
 
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer.push(args);
+  // GA exige o objeto `arguments` bruto no dataLayer — um array normal não é processado.
+  window.gtag = function gtag() {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer.push(arguments);
   };
-  window.gtag("js", new Date());
-  window.gtag("config", MEASUREMENT_ID);
 
   const script = document.createElement("script");
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
   document.head.appendChild(script);
+
+  window.gtag("js", new Date());
+  window.gtag("config", MEASUREMENT_ID, { send_page_view: true });
 }
 
 export function trackGAPageView(path: string) {
