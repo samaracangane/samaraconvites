@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { useGoogleAnalytics } from "../lib/analytics";
+
 
 
 function NotFoundComponent() {
@@ -143,6 +145,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useGoogleAnalytics();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -152,4 +155,5 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
 
