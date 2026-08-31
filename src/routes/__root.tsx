@@ -145,6 +145,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useGoogleAnalytics();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -154,4 +155,5 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
 
