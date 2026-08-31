@@ -47,8 +47,9 @@ export function useGoogleAnalytics() {
   const router = useRouter();
 
   useEffect(() => {
+    // O `config` inicial já envia o primeiro page_view; aqui só as trocas de rota.
     initGoogleAnalytics();
-    trackGAPageView(router.state.location.pathname);
+
 
     const unsubscribe = router.subscribe("onResolved", () => {
       trackGAPageView(router.state.location.pathname);
