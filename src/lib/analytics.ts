@@ -18,11 +18,14 @@ export function initGoogleAnalytics() {
   initialized = true;
 
   window.dataLayer = window.dataLayer || [];
-  // GA exige o objeto `arguments` bruto no dataLayer — um array normal não é processado.
-  window.gtag = function gtag() {
-    // eslint-disable-next-line prefer-rest-params
-    window.dataLayer.push(arguments);
-  };
+  // Se o GTM já carregou, usa o gtag dele; senão define o nosso.
+  if (!window.gtag) {
+    // GA exige o objeto `arguments` bruto no dataLayer — um array normal não é processado.
+    window.gtag = function gtag() {
+      // eslint-disable-next-line prefer-rest-params
+      window.dataLayer.push(arguments);
+    };
+  }
 
   const script = document.createElement("script");
   script.async = true;
