@@ -15,11 +15,11 @@ export function Hero() {
         />
       </Link>
 
-      <div className="w-full bg-primary px-4 py-4 shadow-soft md:py-5">
-        <p className="mx-auto max-w-4xl text-center font-script text-lg leading-relaxed text-sunny md:text-2xl">
-          Escolha seu tema, envie os dados da sua festa e receba seu convite personalizado pronto para compartilhar pelo WhatsApp.
-        </p>
-      </div>
+      <div className="h-2 w-full bg-primary md:h-3" />
+
+      <p className="mx-auto max-w-4xl px-4 py-4 text-center font-display text-base leading-relaxed text-sunny md:py-6 md:text-xl">
+        Escolha seu tema, envie os dados da sua festa e receba seu convite personalizado pronto para compartilhar pelo WhatsApp.
+      </p>
     </section>
   );
 }
