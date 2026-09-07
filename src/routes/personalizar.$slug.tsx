@@ -49,6 +49,7 @@ function PersonalizarPage() {
   const createOrderFn = useServerFn(createOrder);
   const startCheckoutFn = useServerFn(startOrderCheckout);
   const uploadOrderMediaFn = useServerFn(uploadOrderMedia);
+  const prepareKiwifyFn = useServerFn(preareKiwifyCheckout);
 
   if (isLoading) {
     return (
