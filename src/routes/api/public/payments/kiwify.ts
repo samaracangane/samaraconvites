@@ -41,6 +41,7 @@ export const Route = createFileRoute("/api/public/payments/kiwify")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         await supabaseAdmin.from("payment_events").insert({
+          id: crypto.randomUUID(),
           event,
           order_id: orderId,
           payload: payload as any,
