@@ -17,6 +17,7 @@ export type PublicOrder = {
   pix_expires_at: string | null;
   payment_url: string | null;
   payment_method: string | null;
+  payment_provider: string | null;
   payment_status: string | null;
   paid_at: string | null;
   payment_updated_at: string | null;
@@ -32,7 +33,7 @@ export type PublicOrder = {
 };
 
 export const PUBLIC_ORDER_COLUMNS =
-  "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, pix_qr_image, pix_expires_at, payment_url, payment_method, payment_status, paid_at, payment_updated_at, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at";
+  "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, pix_qr_image, pix_expires_at, payment_url, payment_method, payment_provider, payment_status, paid_at, payment_updated_at, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
