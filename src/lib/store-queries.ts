@@ -86,6 +86,7 @@ export function mapProduct(p: ProductRow, catBySlug: Record<string, string> = {}
     isNew: p.is_new,
     onSale: p.on_sale,
     coverIndex: p.cover_index ?? 0,
+    kiwifyCheckoutUrl: p.kiwify_checkout_url ?? undefined,
   };
 }
 
