@@ -43,7 +43,7 @@ export const Route = createFileRoute("/api/public/payments/kiwify")({
         await supabaseAdmin.from("payment_events").insert({
           event,
           order_id: orderId,
-          payload,
+          payload: payload as any,
           provider: "kiwify",
           payment_id:
             (payload.payment_id as string | null) ??
