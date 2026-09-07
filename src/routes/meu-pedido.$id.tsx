@@ -82,7 +82,7 @@ function MeuPedido() {
 
   // Rede de segurança: enquanto estiver pendente, reconsulta o Asaas.
   useEffect(() => {
-    if (!data || data.status !== "pending" || !data.payment_method) return;
+    if (!data || data.status !== "pending" || !data.payment_method || data.payment_provider === "kiwify") return;
     const check = async () => {
       if (syncing.current) return;
       syncing.current = true;
