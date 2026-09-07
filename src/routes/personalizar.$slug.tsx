@@ -294,7 +294,7 @@ function PersonalizarPage() {
               <span className="text-2xl font-bold text-primary">{formatBRL(product.price)}</span>
             </div>
             <div className="mt-3 rounded-xl bg-primary/10 px-3 py-2 text-center text-xs font-bold text-primary">
-              Pagamento por PIX ou cartão (Asaas)
+              {product.kiwifyCheckoutUrl ? "Pagamento seguro via Kiwify" : "Pagamento por PIX ou cartão (Asaas)"}
             </div>
             <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
               ⏱️ Entrega em até {product.deliveryHours}h após pagamento
