@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import bannerHero from "@/assets/banner-hero-v2.webp.asset.json";
+import bannerHero from "@/assets/banner-hero-v3.png.asset.json";
 
 export function Hero() {
   return (
@@ -17,7 +17,7 @@ export function Hero() {
 
       <div className="h-2 w-full bg-primary md:h-3" />
 
-      <p className="mx-auto max-w-4xl px-4 py-4 text-center font-display text-base leading-relaxed text-sunny md:py-6 md:text-xl">
+      <p className="mx-auto max-w-4xl px-4 py-4 text-center font-display text-base leading-relaxed text-primary md:py-6 md:text-xl">
         Escolha seu tema, envie os dados da sua festa e receba seu convite personalizado pronto para compartilhar pelo WhatsApp.
       </p>
     </section>
