@@ -32,6 +32,7 @@ export type Product = {
   isNew?: boolean;
   onSale?: boolean;
   coverIndex?: number;
+  kiwifyCheckoutUrl?: string;
 };
 
 export const categories: Category[] = [
