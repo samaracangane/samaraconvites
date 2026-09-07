@@ -144,24 +144,11 @@ function PersonalizarPage() {
         },
       });
 
-      if (product.kiwifyCheckoutUrl) {
-        try {
-          const { url } = await prepareKiwifyFn({
-            data: { orderId, checkoutUrl: product.kiwifyCheckoutUrl },
-          });
-          window.location.href = url;
-          return;
-        } catch (checkoutError) {
-          console.error(checkoutError);
-          toast.error("Não foi possível abrir o checkout da Kiwify. Tente novamente.");
-        }
-      } else {
-        try {
-          await startCheckoutFn({ data: { orderId, method: "PIX" } });
-        } catch (checkoutError) {
-          console.error(checkoutError);
-          toast.error("Pedido salvo! Abra a página do pedido para escolher o pagamento.");
-        }
+      try {
+        await startCheckoutFn({ data: { orderId, method: "PIX" } });
+      } catch (checkoutError) {
+        console.error(checkoutError);
+        toast.error("Pedido salvo! Abra a página do pedido para escolher o pagamento.");
       }
       window.location.href = `/meu-pedido/${orderId}`;
 
@@ -294,7 +281,7 @@ function PersonalizarPage() {
               <span className="text-2xl font-bold text-primary">{formatBRL(product.price)}</span>
             </div>
             <div className="mt-3 rounded-xl bg-primary/10 px-3 py-2 text-center text-xs font-bold text-primary">
-              {product.kiwifyCheckoutUrl ? "Pagamento seguro via Kiwify" : "Pagamento por PIX ou cartão (Asaas)"}
+              Pagamento por PIX ou cartão (Asaas)
             </div>
             <div className="mt-3 rounded-xl bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
               ⏱️ Entrega em até {product.deliveryHours}h após pagamento
