@@ -268,6 +268,58 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
   });
 
 /**
+ * Prepara o checkout da Kiwify para um pedido recém-criado.
+ * Monta a URL do checkout com os dados da cliente e o identificador interno
+ * do pedido (sck), para que o webhook da Kiwify consiga vincular a venda.
+ */
+export const prepareKiwifyCheckout = createServerFn({ method: "POST" })
+  .inputValidator((data: { orderId: string; checkoutUrl: string }) => {
+    if (!UUID_RE.test(data?.orderId ?? "")) throw new Error("Pedido inválido");
+    const url = (data?.checkoutUrl ?? "").trim();
+    if (!/^https?:\/\//i.test(url)) throw new Error("Link do checkout Kiwify inválido");
+    return { orderId: data.orderId, checkoutUrl: url };
+  })
+  .handler(async ({ data }): Promise<{ url: string }> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: order, error } = await supabaseAdmin
+      .from("orders")
+      .select("id, status, customer_name, customer_email, customer_document, customer_phone")
+      .eq("id", data.orderId)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!order) throw new Error("Pedido não encontrado");
+
+    const o = order as any;
+    if (o.status !== "pending") throw new Error("Este pedido não está aguardando pagamento");
+
+    const url = new URL(data.checkoutUrl);
+    url.searchParams.set("name", o.customer_name ?? "");
+    if (o.customer_email) url.searchParams.set("email", o.customer_email);
+    if (o.customer_document) url.searchParams.set("cpf", o.customer_document);
+    url.searchParams.set("phone", String(o.customer_phone ?? "").replace(/\D/g, ""));
+    url.searchParams.set("region", "br");
+    url.searchParams.set("sck", data.orderId);
+
+    const finalUrl = url.toString();
+
+    await supabaseAdmin
+      .from("orders")
+      .update({
+        payment_provider: "kiwify",
+        payment_method: "kiwify",
+        payment_status: "pending",
+        payment_url: finalUrl,
+        payment_updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", data.orderId);
+
+    return { url: finalUrl };
+  });
+
+/**
  * Reconsulta o status da cobrança direto no Asaas (rede de segurança caso o
  * webhook atrase). O pedido só vira "pago" com a confirmação oficial do Asaas.
  */
