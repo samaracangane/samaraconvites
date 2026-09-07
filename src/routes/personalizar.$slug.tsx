@@ -4,7 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { formatBRL } from "@/lib/mock-data";
 import { useStoreProduct } from "@/lib/store-queries";
 import { useServerFn } from "@tanstack/react-start";
-import { createOrder, startOrderCheckout, prepareKiwifyCheckout } from "@/lib/orders.functions";
+import { createOrder, startOrderCheckout } from "@/lib/orders.functions";
 import { uploadOrderMedia } from "@/lib/order-media.functions";
 import { ArrowLeft, Sparkles, Upload, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
@@ -49,7 +49,6 @@ function PersonalizarPage() {
   const createOrderFn = useServerFn(createOrder);
   const startCheckoutFn = useServerFn(startOrderCheckout);
   const uploadOrderMediaFn = useServerFn(uploadOrderMedia);
-  const prepareKiwifyFn = useServerFn(prepareKiwifyCheckout);
 
   if (isLoading) {
     return (
