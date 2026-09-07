@@ -34,6 +34,7 @@ type ProductRow = {
   active: boolean;
   sort_order: number;
   cover_index: number | null;
+  kiwify_checkout_url: string | null;
 };
 
 const PLACEHOLDER =
@@ -85,6 +86,7 @@ export function mapProduct(p: ProductRow, catBySlug: Record<string, string> = {}
     isNew: p.is_new,
     onSale: p.on_sale,
     coverIndex: p.cover_index ?? 0,
+    kiwifyCheckoutUrl: p.kiwify_checkout_url ?? undefined,
   };
 }
 

@@ -52,6 +52,7 @@ const PAYMENT_STATUS_LABEL: Record<string, string> = {
 const PAYMENT_METHOD_LABEL: Record<string, string> = {
   PIX: "PIX",
   CREDIT_CARD: "Cartão de crédito",
+  kiwify: "Kiwify",
 };
 
 function formatBRL(v: number) {
@@ -81,7 +82,7 @@ function MeuPedido() {
 
   // Rede de segurança: enquanto estiver pendente, reconsulta o Asaas.
   useEffect(() => {
-    if (!data || data.status !== "pending" || !data.payment_method) return;
+    if (!data || data.status !== "pending" || !data.payment_method || data.payment_provider === "kiwify") return;
     const check = async () => {
       if (syncing.current) return;
       syncing.current = true;
@@ -236,63 +237,86 @@ function MeuPedido() {
 
             {data.status === "pending" && (
               <div className="space-y-4">
-                {/* Escolha da forma de pagamento */}
-                <div className="rounded-3xl border border-border bg-card p-6">
-                  <div className="text-xs font-bold uppercase tracking-wider text-primary">
-                    Como você quer pagar?
+                {data.payment_provider === "kiwify" ? (
+                  <div className="rounded-3xl border border-border bg-card p-6 text-center">
+                    <div className="text-xs font-bold uppercase tracking-wider text-primary">
+                      Finalize seu pagamento
+                    </div>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Você será redirecionado para o checkout seguro da Kiwify.
+                    </p>
+                    {data.payment_url && (
+                      <a
+                        href={data.payment_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-primary-gradient px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow"
+                      >
+                        <CreditCard className="h-4 w-4" /> Pagar agora
+                      </a>
+                    )}
                   </div>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      onClick={() => choose("PIX")}
-                      disabled={creating !== null}
-                      className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition disabled:opacity-60 ${
-                        data.payment_method === "PIX"
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/60"
-                      }`}
-                    >
-                      <QrCode className="h-4 w-4" />
-                      {creating === "PIX" ? "Gerando PIX…" : "PIX"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => choose("CREDIT_CARD")}
-                      disabled={creating !== null}
-                      className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition disabled:opacity-60 ${
-                        data.payment_method === "CREDIT_CARD"
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-primary/60"
-                      }`}
-                    >
-                      <CreditCard className="h-4 w-4" />
-                      {creating === "CREDIT_CARD" ? "Abrindo checkout…" : "Cartão de crédito"}
-                    </button>
-                  </div>
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    O pagamento é processado com segurança pelo Asaas. Nenhum dado do cartão passa
-                    ou fica guardado na nossa loja.
-                  </p>
-                </div>
+                ) : (
+                  <>
+                    {/* Escolha da forma de pagamento */}
+                    <div className="rounded-3xl border border-border bg-card p-6">
+                      <div className="text-xs font-bold uppercase tracking-wider text-primary">
+                        Como você quer pagar?
+                      </div>
+                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                        <button
+                          type="button"
+                          onClick={() => choose("PIX")}
+                          disabled={creating !== null}
+                          className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition disabled:opacity-60 ${
+                            data.payment_method === "PIX"
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border hover:border-primary/60"
+                          }`}
+                        >
+                          <QrCode className="h-4 w-4" />
+                          {creating === "PIX" ? "Gerando PIX…" : "PIX"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => choose("CREDIT_CARD")}
+                          disabled={creating !== null}
+                          className={`flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold transition disabled:opacity-60 ${
+                            data.payment_method === "CREDIT_CARD"
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border hover:border-primary/60"
+                          }`}
+                        >
+                          <CreditCard className="h-4 w-4" />
+                          {creating === "CREDIT_CARD" ? "Abrindo checkout…" : "Cartão de crédito"}
+                        </button>
+                      </div>
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        O pagamento é processado com segurança pelo Asaas. Nenhum dado do cartão passa
+                        ou fica guardado na nossa loja.
+                      </p>
+                    </div>
 
-                {data.payment_method === "PIX" && data.pix_payload && (
-                  <PixPayment
-                    payload={data.pix_payload}
-                    amount={total}
-                    qrImage={data.pix_qr_image}
-                    expiresAt={data.pix_expires_at}
-                  />
-                )}
+                    {data.payment_method === "PIX" && data.pix_payload && (
+                      <PixPayment
+                        payload={data.pix_payload}
+                        amount={total}
+                        qrImage={data.pix_qr_image}
+                        expiresAt={data.pix_expires_at}
+                      />
+                    )}
 
-                {data.payment_method === "CREDIT_CARD" && data.payment_url && (
-                  <a
-                    href={data.payment_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-full bg-primary-gradient px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow"
-                  >
-                    <CreditCard className="h-4 w-4" /> Pagar agora
-                  </a>
+                    {data.payment_method === "CREDIT_CARD" && data.payment_url && (
+                      <a
+                        href={data.payment_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center justify-center gap-2 rounded-full bg-primary-gradient px-6 py-3 text-sm font-bold text-primary-foreground shadow-glow"
+                      >
+                        <CreditCard className="h-4 w-4" /> Pagar agora
+                      </a>
+                    )}
+                  </>
                 )}
               </div>
             )}

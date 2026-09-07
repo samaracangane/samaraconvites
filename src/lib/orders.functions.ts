@@ -17,6 +17,7 @@ export type PublicOrder = {
   pix_expires_at: string | null;
   payment_url: string | null;
   payment_method: string | null;
+  payment_provider: string | null;
   payment_status: string | null;
   paid_at: string | null;
   payment_updated_at: string | null;
@@ -32,7 +33,7 @@ export type PublicOrder = {
 };
 
 export const PUBLIC_ORDER_COLUMNS =
-  "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, pix_qr_image, pix_expires_at, payment_url, payment_method, payment_status, paid_at, payment_updated_at, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at";
+  "id, product_title, product_slug, product_image_url, quantity, price, pix_payload, pix_qr_image, pix_expires_at, payment_url, payment_method, payment_provider, payment_status, paid_at, payment_updated_at, status, customer_name, child_name, party_date, party_time, party_location, delivered_media_url, delivered_at, created_at";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -244,6 +245,7 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
       .update({
         asaas_customer_id: customerId,
         asaas_payment_id: payment.id,
+        payment_provider: "asaas",
         payment_method: data.method,
         payment_status: asaas.mapAsaasStatus(payment.status).payment_status,
         payment_url: payment.invoiceUrl ?? null,
@@ -263,6 +265,58 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
       pixExpiresAt,
       paymentUrl: payment.invoiceUrl ?? null,
     };
+  });
+
+/**
+ * Prepara o checkout da Kiwify para um pedido recém-criado.
+ * Monta a URL do checkout com os dados da cliente e o identificador interno
+ * do pedido (sck), para que o webhook da Kiwify consiga vincular a venda.
+ */
+export const prepareKiwifyCheckout = createServerFn({ method: "POST" })
+  .inputValidator((data: { orderId: string; checkoutUrl: string }) => {
+    if (!UUID_RE.test(data?.orderId ?? "")) throw new Error("Pedido inválido");
+    const url = (data?.checkoutUrl ?? "").trim();
+    if (!/^https?:\/\//i.test(url)) throw new Error("Link do checkout Kiwify inválido");
+    return { orderId: data.orderId, checkoutUrl: url };
+  })
+  .handler(async ({ data }): Promise<{ url: string }> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: order, error } = await supabaseAdmin
+      .from("orders")
+      .select("id, status, customer_name, customer_email, customer_document, customer_phone")
+      .eq("id", data.orderId)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!order) throw new Error("Pedido não encontrado");
+
+    const o = order as any;
+    if (o.status !== "pending") throw new Error("Este pedido não está aguardando pagamento");
+
+    const url = new URL(data.checkoutUrl);
+    url.searchParams.set("name", o.customer_name ?? "");
+    if (o.customer_email) url.searchParams.set("email", o.customer_email);
+    if (o.customer_document) url.searchParams.set("cpf", o.customer_document);
+    url.searchParams.set("phone", String(o.customer_phone ?? "").replace(/\D/g, ""));
+    url.searchParams.set("region", "br");
+    url.searchParams.set("sck", data.orderId);
+
+    const finalUrl = url.toString();
+
+    await supabaseAdmin
+      .from("orders")
+      .update({
+        payment_provider: "kiwify",
+        payment_method: "kiwify",
+        payment_status: "pending",
+        payment_url: finalUrl,
+        payment_updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", data.orderId);
+
+    return { url: finalUrl };
   });
 
 /**

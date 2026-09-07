@@ -116,6 +116,8 @@ export type Database = {
           environment: string
           gift_type: string | null
           id: string
+          kiwify_order_id: string | null
+          kiwify_payment_id: string | null
           message: string | null
           music_url: string | null
           notes: string | null
@@ -128,6 +130,7 @@ export type Database = {
           party_map_url: string | null
           party_time: string | null
           payment_method: string | null
+          payment_provider: string | null
           payment_status: string
           payment_updated_at: string | null
           payment_url: string | null
@@ -163,6 +166,8 @@ export type Database = {
           environment?: string
           gift_type?: string | null
           id?: string
+          kiwify_order_id?: string | null
+          kiwify_payment_id?: string | null
           message?: string | null
           music_url?: string | null
           notes?: string | null
@@ -175,6 +180,7 @@ export type Database = {
           party_map_url?: string | null
           party_time?: string | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_status?: string
           payment_updated_at?: string | null
           payment_url?: string | null
@@ -210,6 +216,8 @@ export type Database = {
           environment?: string
           gift_type?: string | null
           id?: string
+          kiwify_order_id?: string | null
+          kiwify_payment_id?: string | null
           message?: string | null
           music_url?: string | null
           notes?: string | null
@@ -222,6 +230,7 @@ export type Database = {
           party_map_url?: string | null
           party_time?: string | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_status?: string
           payment_updated_at?: string | null
           payment_url?: string | null
@@ -335,6 +344,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_new: boolean
+          kiwify_checkout_url: string | null
           old_price: number | null
           on_sale: boolean
           paddle_price_id: string | null
@@ -360,6 +370,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_new?: boolean
+          kiwify_checkout_url?: string | null
           old_price?: number | null
           on_sale?: boolean
           paddle_price_id?: string | null
@@ -385,6 +396,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_new?: boolean
+          kiwify_checkout_url?: string | null
           old_price?: number | null
           on_sale?: boolean
           paddle_price_id?: string | null
