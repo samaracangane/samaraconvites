@@ -52,6 +52,7 @@ const PAYMENT_STATUS_LABEL: Record<string, string> = {
 const PAYMENT_METHOD_LABEL: Record<string, string> = {
   PIX: "PIX",
   CREDIT_CARD: "Cartão de crédito",
+  kiwify: "Kiwify",
 };
 
 function formatBRL(v: number) {
