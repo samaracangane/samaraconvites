@@ -144,11 +144,24 @@ function PersonalizarPage() {
         },
       });
 
-      try {
-        await startCheckoutFn({ data: { orderId, method: "PIX" } });
-      } catch (checkoutError) {
-        console.error(checkoutError);
-        toast.error("Pedido salvo! Abra a página do pedido para escolher o pagamento.");
+      if (product.kiwifyCheckoutUrl) {
+        try {
+          const { url } = await prepareKiwifyFn({
+            data: { orderId, checkoutUrl: product.kiwifyCheckoutUrl },
+          });
+          window.location.href = url;
+          return;
+        } catch (checkoutError) {
+          console.error(checkoutError);
+          toast.error("Não foi possível abrir o checkout da Kiwify. Tente novamente.");
+        }
+      } else {
+        try {
+          await startCheckoutFn({ data: { orderId, method: "PIX" } });
+        } catch (checkoutError) {
+          console.error(checkoutError);
+          toast.error("Pedido salvo! Abra a página do pedido para escolher o pagamento.");
+        }
       }
       window.location.href = `/meu-pedido/${orderId}`;
 
