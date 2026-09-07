@@ -34,6 +34,7 @@ type ProductRow = {
   active: boolean;
   sort_order: number;
   cover_index: number | null;
+  kiwify_checkout_url: string | null;
 };
 
 const PLACEHOLDER =
