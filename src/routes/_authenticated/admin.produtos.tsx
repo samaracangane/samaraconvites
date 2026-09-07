@@ -38,6 +38,7 @@ type Product = {
   sort_order: number;
   active: boolean;
   cover_index: number;
+  kiwify_checkout_url: string | null;
 };
 
 type Category = { id: string; name: string };
