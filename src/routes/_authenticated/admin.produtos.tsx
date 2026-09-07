@@ -223,6 +223,14 @@ function ProductForm({
         accept="video/*"
         folder="produtos"
       />
+      <F label="Link de checkout Kiwify (opcional)">
+        <Input
+          type="url"
+          placeholder="https://pay.kiwify.com.br/abc123"
+          value={v.kiwify_checkout_url ?? ""}
+          onChange={(e) => set("kiwify_checkout_url", e.target.value ? e.target.value : null)}
+        />
+      </F>
 
       <F label="Primeira mídia exibida na página do produto">
         <Select
