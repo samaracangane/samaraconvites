@@ -245,6 +245,7 @@ export const startOrderCheckout = createServerFn({ method: "POST" })
       .update({
         asaas_customer_id: customerId,
         asaas_payment_id: payment.id,
+        payment_provider: "asaas",
         payment_method: data.method,
         payment_status: asaas.mapAsaasStatus(payment.status).payment_status,
         payment_url: payment.invoiceUrl ?? null,
