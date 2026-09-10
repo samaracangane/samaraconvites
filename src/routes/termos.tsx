@@ -44,7 +44,7 @@ function TermosPage() {
               com sede em Monte Aprazível — SP, Brasil ("nós", "nosso"). Vendemos convites
               digitais infantis personalizados, entregues exclusivamente em formato digital (imagem, vídeo ou
               link interativo), sem envio de produto físico. Ao comprar ou utilizar nossos serviços, você
-              celebra um contrato diretamente conosco. Contato: WhatsApp (17) 99672-2089 · e-mail
+              celebra um contrato diretamente conosco. Contato: e-mail
               srcangane@gmail.com · veja também nossa{" "}
               <Link to="/contato" className="text-primary underline">
                 página de contato
@@ -78,7 +78,7 @@ function TermosPage() {
             <h2 className="font-display text-2xl text-foreground">4. Informações e conta</h2>
             <p className="mt-2">
               Você se compromete a fornecer informações verdadeiras, completas e atualizadas
-              (nome, e-mail, WhatsApp e dados da festa). Você é responsável por manter a
+              (nome, e-mail, telefone e dados da festa). Você é responsável por manter a
               confidencialidade das suas credenciais de acesso e por toda atividade realizada na
               sua conta. Erros de digitação nos dados enviados podem exigir ajustes e afetar o
               prazo de entrega.

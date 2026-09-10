@@ -143,7 +143,7 @@ function Home() {
           {[
             { n: "1", t: "Escolha o convite", d: "Encontre o convite ideal navegando por categorias e filtros.", e: "🎨" },
             { n: "2", t: "Personalize", d: "Preencha os dados da festa: tema, data, local, mensagem e mais.", e: "✏️" },
-            { n: "3", t: "Receba em 24h", d: "Após o pagamento, seu convite chega pronto no seu WhatsApp.", e: "💌" },
+            { n: "3", t: "Receba em 24h", d: "Após o pagamento, seu convite chega pronto no seu e-mail.", e: "💌" },
           ].map((s) => (
             <div key={s.n} className="rounded-3xl border border-border/60 bg-card p-6 shadow-card">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-2xl">{s.e}</div>

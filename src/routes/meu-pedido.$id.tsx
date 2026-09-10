@@ -126,7 +126,7 @@ function MeuPedido() {
 
         {(isError || (!isLoading && !data)) && (
           <div className="mt-6 rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
-            Não encontramos esse pedido. Confira o link recebido ou fale com a gente pelo WhatsApp.
+            Não encontramos esse pedido. Confira o link recebido ou fale com a gente pelo e-mail.
           </div>
         )}
 

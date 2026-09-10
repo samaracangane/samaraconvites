@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Mail, MessageCircle } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { useStorePages } from "@/lib/store-queries";
 import { BUSINESS, BUSINESS_ADDRESS } from "@/lib/business";
@@ -18,11 +18,6 @@ export function Footer() {
           </p>
           <div className="mt-4 space-y-1 text-sm text-muted-foreground">
             <p>
-              <a href={BUSINESS.whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
-                WhatsApp {BUSINESS.whatsappDisplay}
-              </a>
-            </p>
-            <p>
               <a href={`mailto:${BUSINESS.email}`} className="hover:text-primary">
                 {BUSINESS.email}
               </a>
@@ -31,7 +26,6 @@ export function Footer() {
           </div>
           <div className="mt-5 flex gap-2">
             <a href={BUSINESS.instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><Instagram className="h-4 w-4" /></a>
-            <a href={BUSINESS.whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><MessageCircle className="h-4 w-4" /></a>
             <a href={`mailto:${BUSINESS.email}`} aria-label="E-mail" className="rounded-full bg-primary/10 p-2.5 text-primary hover:bg-primary/20"><Mail className="h-4 w-4" /></a>
           </div>
         </div>

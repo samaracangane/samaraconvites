@@ -43,7 +43,7 @@ const steps = [
   },
   {
     t: "5. Ajustes e suporte",
-    d: "Encontrou um erro de digitação? Fale com a gente pelo WhatsApp ou e-mail e corrigimos sem custo adicional.",
+    d: "Encontrou um erro de digitação? Fale com a gente por e-mail e corrigimos sem custo adicional.",
   },
 ];
 
@@ -94,11 +94,7 @@ function ComoComprar() {
         </section>
 
         <p className="mt-8 text-sm text-muted-foreground">
-          Ainda com dúvidas? Fale com a gente pelo WhatsApp{" "}
-          <a href={BUSINESS.whatsappUrl} className="text-primary underline" target="_blank" rel="noopener noreferrer">
-            {BUSINESS.whatsappDisplay}
-          </a>{" "}
-          ou pelo e-mail{" "}
+          Ainda com dúvidas? Fale com a gente pelo e-mail{" "}
           <a href={`mailto:${BUSINESS.email}`} className="text-primary underline">
             {BUSINESS.email}
           </a>

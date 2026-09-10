@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { Instagram, MessageCircle, Mail, MapPin, Clock } from "lucide-react";
+import { Instagram, Mail, MapPin, Clock } from "lucide-react";
 import { BUSINESS, BUSINESS_ADDRESS } from "@/lib/business";
 
 export const Route = createFileRoute("/contato")({
@@ -11,10 +11,10 @@ export const Route = createFileRoute("/contato")({
       {
         name: "description",
         content:
-          "Fale com a Samara Encanto Convites por WhatsApp (17) 99672-2089, e-mail ou Instagram. Atendimento de segunda a sexta, das 9h às 18h.",
+          "Fale com a Samara Encanto Convites por e-mail ou Instagram. Atendimento de segunda a sexta, das 9h às 18h.",
       },
       { property: "og:title", content: "Contato — Samara Encanto Convites" },
-      { property: "og:description", content: "WhatsApp, e-mail e Instagram para suporte e dúvidas sobre convites digitais." },
+      { property: "og:description", content: "E-mail e Instagram para suporte e dúvidas sobre convites digitais." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -24,12 +24,6 @@ export const Route = createFileRoute("/contato")({
 
 function Contato() {
   const channels = [
-    {
-      i: <MessageCircle className="h-5 w-5" />,
-      t: "WhatsApp",
-      d: BUSINESS.whatsappDisplay,
-      h: BUSINESS.whatsappUrl,
-    },
     {
       i: <Mail className="h-5 w-5" />,
       t: "E-mail",
@@ -55,7 +49,7 @@ function Contato() {
           pelo canal que preferir — respondemos em até 24 horas úteis.
         </p>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
           {channels.map((c) => (
             <a
               key={c.t}
