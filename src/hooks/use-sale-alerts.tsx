@@ -5,6 +5,7 @@ import { playCoinSound } from "@/lib/coin-sound";
 
 const HEART_ICON = "/heart-notification.png";
 const PAID_STATUSES = ["paid", "delivered"];
+const POLL_MS = 20000;
 
 function formatBRL(value: unknown) {
   const n = Number(value ?? 0);
@@ -14,9 +15,11 @@ function formatBRL(value: unknown) {
 /**
  * Alerta de venda: toca som de moeda e mostra o coração
  * no toast e na notificação do sistema quando um pedido é pago.
+ * Usa realtime + uma verificação periódica como reserva.
  */
 export function useSaleAlerts(enabled = true) {
   const seen = useRef<Set<string>>(new Set());
+  const startedAt = useRef<string>(new Date().toISOString());
 
   useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
@@ -81,7 +84,29 @@ export function useSaleAlerts(enabled = true) {
       )
       .subscribe();
 
+    // Reserva: se o realtime cair (aba em segundo plano, rede instável),
+    // busca pedidos pagos recentes e avisa mesmo assim.
+    async function poll() {
+      const { data } = await supabase
+        .from("orders")
+        .select("id, product_title, price, customer_name, paid_at")
+        .eq("status", "paid")
+        .gte("paid_at", startedAt.current)
+        .order("paid_at", { ascending: true })
+        .limit(20);
+      for (const row of data ?? []) announce(row as Record<string, any>);
+    }
+
+    void poll();
+    const timer = window.setInterval(() => void poll(), POLL_MS);
+    const onFocus = () => void poll();
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+
     return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
       supabase.removeChannel(channel);
     };
   }, [enabled]);
