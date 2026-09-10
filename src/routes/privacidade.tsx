@@ -60,7 +60,7 @@ function PrivacidadePage() {
                 credenciais de login.
               </li>
               <li className="ml-5 list-disc">
-                <strong className="text-foreground">Dados do pedido:</strong> WhatsApp, nome e idade
+                <strong className="text-foreground">Dados do pedido:</strong> telefone, nome e idade
                 do aniversariante, data, horário, local e endereço da festa, mensagem, fotos e
                 músicas enviadas.
               </li>

@@ -34,7 +34,7 @@ function Sobre() {
           </p>
           <p className="mt-1"><strong className="text-foreground">Localização:</strong> Monte Aprazível — SP, Brasil.</p>
           <p className="mt-1">
-            <strong className="text-foreground">Atendimento:</strong> WhatsApp (17) 99672-2089 · srcangane@gmail.com ·
+            <strong className="text-foreground">Atendimento:</strong> srcangane@gmail.com ·
             segunda a sexta, das 9h às 18h.
           </p>
           <p className="mt-1">

@@ -68,7 +68,7 @@ const Email = ({
 
         <Hr style={hr} />
         <Text style={footer}>
-          Em breve entraremos em contato pelo WhatsApp com a prévia do seu convite.
+          Em breve entraremos em contato por e-mail com a prévia do seu convite.
         </Text>
       </Container>
     </Body>
