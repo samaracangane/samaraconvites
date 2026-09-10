@@ -163,6 +163,12 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function SaleAlertsWatcher() {
+  const { isAdmin } = useCurrentUser();
+  useSaleAlerts(isAdmin);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useGoogleAnalytics();
@@ -171,6 +177,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <SaleAlertsWatcher />
       <Toaster position="top-right" richColors />
     </QueryClientProvider>
   );
