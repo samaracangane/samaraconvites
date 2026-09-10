@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { useSaleAlerts } from "@/hooks/use-sale-alerts";
+
 import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ function AdminLayout() {
   const { user, isAdmin, loading } = useCurrentUser();
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  useSaleAlerts(isAdmin);
+  
 
 
 
