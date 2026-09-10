@@ -10,6 +10,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { Toaster } from "@/components/ui/sonner";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useSaleAlerts } from "@/hooks/use-sale-alerts";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { useGoogleAnalytics } from "../lib/analytics";
@@ -163,6 +165,12 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function SaleAlertsWatcher() {
+  const { isAdmin } = useCurrentUser();
+  useSaleAlerts(isAdmin);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useGoogleAnalytics();
@@ -171,6 +179,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <SaleAlertsWatcher />
       <Toaster position="top-right" richColors />
     </QueryClientProvider>
   );
