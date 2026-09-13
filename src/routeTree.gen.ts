@@ -28,6 +28,7 @@ import { Route as CategoriaSlugRouteImport } from './routes/categoria.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminVitrinesRouteImport } from './routes/_authenticated/admin.vitrines'
+import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated/admin.vendas'
 import { Route as AuthenticatedAdminProdutosRouteImport } from './routes/_authenticated/admin.produtos'
 import { Route as AuthenticatedAdminPedidosRouteImport } from './routes/_authenticated/admin.pedidos'
 import { Route as AuthenticatedAdminPaginasRouteImport } from './routes/_authenticated/admin.paginas'
@@ -132,6 +133,12 @@ const AuthenticatedAdminVitrinesRoute =
     path: '/vitrines',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminVendasRoute =
+  AuthenticatedAdminVendasRouteImport.update({
+    id: '/vendas',
+    path: '/vendas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminProdutosRoute =
   AuthenticatedAdminProdutosRouteImport.update({
     id: '/produtos',
@@ -201,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/admin/paginas': typeof AuthenticatedAdminPaginasRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
@@ -228,6 +236,7 @@ export interface FileRoutesByTo {
   '/admin/paginas': typeof AuthenticatedAdminPaginasRoute
   '/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/admin/produtos': typeof AuthenticatedAdminProdutosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
@@ -258,6 +267,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/paginas': typeof AuthenticatedAdminPaginasRoute
   '/_authenticated/admin/pedidos': typeof AuthenticatedAdminPedidosRoute
   '/_authenticated/admin/produtos': typeof AuthenticatedAdminProdutosRoute
+  '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/_authenticated/admin/vitrines': typeof AuthenticatedAdminVitrinesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/payments/asaas': typeof ApiPublicPaymentsAsaasRoute
@@ -288,6 +298,7 @@ export interface FileRouteTypes {
     | '/admin/paginas'
     | '/admin/pedidos'
     | '/admin/produtos'
+    | '/admin/vendas'
     | '/admin/vitrines'
     | '/admin/'
     | '/api/public/payments/asaas'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/admin/paginas'
     | '/admin/pedidos'
     | '/admin/produtos'
+    | '/admin/vendas'
     | '/admin/vitrines'
     | '/admin'
     | '/api/public/payments/asaas'
@@ -344,6 +356,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/paginas'
     | '/_authenticated/admin/pedidos'
     | '/_authenticated/admin/produtos'
+    | '/_authenticated/admin/vendas'
     | '/_authenticated/admin/vitrines'
     | '/_authenticated/admin/'
     | '/api/public/payments/asaas'
@@ -508,6 +521,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVitrinesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/vendas': {
+      id: '/_authenticated/admin/vendas'
+      path: '/vendas'
+      fullPath: '/admin/vendas'
+      preLoaderRoute: typeof AuthenticatedAdminVendasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/produtos': {
       id: '/_authenticated/admin/produtos'
       path: '/produtos'
@@ -573,6 +593,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPaginasRoute: typeof AuthenticatedAdminPaginasRoute
   AuthenticatedAdminPedidosRoute: typeof AuthenticatedAdminPedidosRoute
   AuthenticatedAdminProdutosRoute: typeof AuthenticatedAdminProdutosRoute
+  AuthenticatedAdminVendasRoute: typeof AuthenticatedAdminVendasRoute
   AuthenticatedAdminVitrinesRoute: typeof AuthenticatedAdminVitrinesRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -583,6 +604,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPaginasRoute: AuthenticatedAdminPaginasRoute,
   AuthenticatedAdminPedidosRoute: AuthenticatedAdminPedidosRoute,
   AuthenticatedAdminProdutosRoute: AuthenticatedAdminProdutosRoute,
+  AuthenticatedAdminVendasRoute: AuthenticatedAdminVendasRoute,
   AuthenticatedAdminVitrinesRoute: AuthenticatedAdminVitrinesRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
