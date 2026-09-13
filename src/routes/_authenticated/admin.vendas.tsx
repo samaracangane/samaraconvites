@@ -128,7 +128,7 @@ function ConfirmedSalesPage() {
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">
             {filtered.map((sale) => (
-              <article key={sale.id} className="flex gap-4 rounded-2xl border border-border/60 bg-card p-4 shadow-card">
+              <article key={sale.id} className="flex min-w-0 gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-card sm:gap-4">
                 <div className="h-24 w-16 shrink-0 overflow-hidden rounded-xl bg-muted">
                   {sale.product_image_url ? (
                     <img src={sale.product_image_url} alt={sale.product_title} loading="lazy" className="h-full w-full object-cover" />
@@ -149,7 +149,7 @@ function ConfirmedSalesPage() {
                     <span>{sale.payment_method === "CREDIT_CARD" ? "Cartão" : "PIX"}</span>
                     <span>{new Date(sale.paid_at ?? sale.created_at).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}</span>
                   </div>
-                  <div className="mt-3 flex items-center justify-between gap-3">
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                     <span className="inline-flex items-center gap-1 rounded-full bg-mint px-2.5 py-1 text-[11px] font-bold text-foreground/75">
                       <BadgeCheck className="h-3.5 w-3.5" /> {sale.status === "delivered" ? "Entregue" : "Pagamento confirmado"}
                     </span>
