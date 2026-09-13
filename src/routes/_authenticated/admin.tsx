@@ -12,6 +12,7 @@ import {
   FileText,
   LayoutList,
   ShoppingBag,
+  BadgeDollarSign,
   LogOut,
 } from "lucide-react";
 
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 const nav: NavItem[] = [
   { to: "/admin", label: "Início", icon: LayoutDashboard, exact: true },
+  { to: "/admin/vendas", label: "Vendas confirmadas", icon: BadgeDollarSign },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/categorias", label: "Categorias", icon: Tags },
