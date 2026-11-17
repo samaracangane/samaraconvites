@@ -13,6 +13,7 @@ import {
   LayoutList,
   ShoppingBag,
   BadgeDollarSign,
+  CreditCard,
   LogOut,
 } from "lucide-react";
 
@@ -25,6 +26,7 @@ const nav: NavItem[] = [
   { to: "/admin", label: "Início", icon: LayoutDashboard, exact: true },
   { to: "/admin/vendas", label: "Vendas confirmadas", icon: BadgeDollarSign },
   { to: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
+  { to: "/admin/pagamentos", label: "Pagamentos Wiapy", icon: CreditCard },
   { to: "/admin/produtos", label: "Produtos", icon: Package },
   { to: "/admin/categorias", label: "Categorias", icon: Tags },
   { to: "/admin/banners", label: "Banners", icon: ImageIcon },
